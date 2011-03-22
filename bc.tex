@@ -1,0 +1,471 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                    %%%
+%%% Šablona bakalářské práce na MFF UK %%%
+%%%                                    %%%
+%%% (c) František Štrupl, 2005         %%%
+%%%                                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% POZOR: Úprava bakalářské práce je závislá rovněž na volbě jednostranného resp. oboustranného tisku.
+%%%        Bližši informace naleznete v dokumentu Úprava bakalářské práce, který se nalézá na adrese:
+%%%        http://www.mff.cuni.cz/studium/obecne/bplayout/pok12mo4.pdf
+
+\documentclass[12pt,notitlepage]{report}
+%\pagestyle{headings}
+\pagestyle{plain}
+
+\frenchspacing % aktivuje použití některých českých typografických pravidel
+
+\usepackage[utf8]{inputenc} % nastavuje použité kódování, uživatelé Windows zamění latin2 za cp1250
+\usepackage[czech]{babel}
+\usepackage{a4wide} % nastavuje standardní evropský formát stránek A4
+%\usepackage{index} % nutno použít v případě tvorby rejstříku balíčkem makeindex
+%\usepackage{fancybox} % umožňuje pokročilé rámečkování :-)
+\usepackage[pdftex]{graphicx} % nezbytné pro standardní vkládání obrázků do dokumentu
+\usepackage{epstopdf}
+\usepackage{url}
+
+\usepackage[left=4cm]{geometry} % nastavení dané velikosti okrajů
+
+%\newindex{default}{idx}{ind}{Rejstřík} % zavádí rejstřík v případě použití balíku index
+
+\title{Řízení robota e-Puck v Pythonu}   % tyto dvě položky jsou zde v podstatě formálně, ve skutečnosti nejsou nikde
+\author{David Marek} % dále v dokumentu použity
+
+%\date{}
+
+\begin{document}
+
+%\csprimeson % zapne jednoduché psaní českých uvozovek pomocí klasických znaků, ale potom pozor
+             % na originální apostrofy, které budou chybně interpretovány!!!
+
+%%% Následuje první, úvodní, strana bakalářské práce. Jednotlivé položky nahraďte dle vlastních
+%%% údajů. Změnit podle konkrétní délky jednotlivých položek můžete i zalomení řádků.
+\begin{titlepage}
+\begin{center}
+\ \\
+
+\vspace{15mm}
+
+\large
+Univerzita Karlova v Praze\\
+Matematicko-fyzikální fakulta\\
+
+\vspace{5mm}
+
+{\Large\bf BAKALÁŘSKÁ PRÁCE}
+
+\vspace{10mm}
+
+%%% Aby vložní loga vše správně fungovalo, je třeba mít soubor logo.eps nahraný v pracovním adresáři,
+%%% tj. v adresáři, kde se nachází překládaný zdrojový soubor. Soubor logo.eps je možné získat např.
+%%% na adrese: http://www.mff.cuni.cz/fakulta/symboly/logo.eps
+\includegraphics[scale=0.3]{logo.eps}
+
+\vspace{15mm}
+
+%\normalsize
+{\Large David Marek}\\ % doplňte vaše jméno
+\vspace{5mm}
+{\Large\bf Řízení robota e-puck v Pythonu}\\ % doplňte název práce
+\vspace{5mm}
+Kabinet software a výuky informatiky\\ % doplňte název katedry či ústavu
+\end{center}
+\vspace{15mm}
+
+\large
+\noindent Vedoucí bakalářské práce: RNDr. František Mráz, CSc. % doplňte odpovídající údaje
+%%% další řádek můžete ve většině případů (tj. pokud údaje uvedené výše nejsou příliš dlouhé) zrušit
+\vspace{1mm}
+
+\noindent Studijní program: Obecná Informatika
+%\noindent Studijní program: název studijního programu, název studijního % doplňte odpovídající údaje
+%%% další řádek můžete ve většině případů (tj. pokud údaje uvedené výše nejsou příliš dlouhé) zrušit
+%\hskip20mm oboru (směru),  příp. název studijního plánu
+
+\vspace{20mm}
+
+\begin{center}
+2010 % doplňte rok vzniku vaší bakalářské práce
+\end{center}
+
+\end{titlepage} % zde končí úvodní strana
+
+\normalsize % nastavení normální velikosti fontu
+\setcounter{page}{2} % nastavení číslování stránek
+\ \vspace{10mm}
+
+\noindent Na tomto místě mohou být napsána případná poděkování (vedoucímu práce, konzultantovi, tomu, kdo půjčil software, literaturu, poskytl data apod.). % doplňte vlastní text
+
+\vspace{\fill} % nastavuje dynamické umístění následujícího textu do spodní části stránky
+\noindent Prohlašuji, že jsem svou bakalářskou práci napsal samostatně a výhradně s použitím citovaných pramenů. Souhlasím se zapůjčováním práce a jejím zveřejňováním.
+
+\bigskip
+\noindent V Praze dne \hspace{\fill}David Marek\\ % doplňte patřičné datum, jméno a příjmení
+
+%%%   Výtisk pak na tomto míste nezapomeňte PODEPSAT!
+%%%                                         *********
+
+\tableofcontents % vkládá automaticky generovaný obsah dokumentu
+
+\newpage % přechod na novou stránku
+
+%%% Následuje strana s abstrakty. Doplňte vlastní údaje.
+\noindent
+Název práce: Řízení robota e-puck v Pythonu\\
+Autor: David Marek\\
+Katedra (ústav): Kabinet software a výuky informatiky\\
+Vedoucí bakalářské práce: RNDr. František Mráz, CSc.\\
+E-mail vedoucího: mraz@ksvi.mff.cuni.cz\\
+
+\noindent Abstrakt:  V předložené práci studujeme ... Uvede se abstrakt v rozsahu 80 až 200 slov. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut sit amet sem. Mauris nec turpis ac sem mollis pretium. Suspendisse neque massa, suscipit id, dictum in, porta at, quam. Nunc suscipit, pede vel elementum pretium, nisl urna sodales velit, sit amet auctor elit quam id tellus. Nullam sollicitudin. Donec hendrerit. Aliquam ac nibh. Vivamus mi. Sed felis. Proin pretium elit in neque. Pellentesque at turpis. Maecenas convallis. Vestibulum id lectus. Fusce dictum augue ut nibh. Etiam non urna nec mi mattis volutpat. Curabitur in tortor at magna nonummy gravida. Mauris turpis quam, volutpat quis, porttitor ut, condimentum sit amet, felis.\\
+
+\noindent Klíčová slova: klíčová slova (3 až 5)
+
+\vspace{10mm}
+
+\noindent
+Title: Název bakalářské práce v angličtině\\
+Author: Jméno autora\\
+Department: Název katedry či ústavu v angličtině\\
+Supervisor: Jméno s tituly jako v české verzi, event. pracoviště\\
+Supervisor's e-mail address: e-mailová adresa vedoucího\\
+
+\noindent Abstract: In the present work we study ... Uvede se anglický abstrakt v rozsahu 80 až 200 slov. \\
+
+\noindent Keywords: klíčová slova (3 až 5) v angličtině
+
+\newpage
+
+%%% Následuje text bakalářské práce členěný do kapitol, které se číslují, označí názvy a graficky oddělí.
+%%% Nedoporučuje se používat víc než dvě úrovně číslování kapitol, viz příklad níže.
+
+\chapter{Úvod}
+
+    \section{Záměr práce}
+
+    \section{Přehled kapitol}
+
+\chapter{Teorie}
+
+    \section{E-puck robot}
+    E-puck je miniaturní robot vytvořený pro výukové účely na akademické
+    úrovni. Vytvořen byl v Ecole Polytechnique Fédérale de Laussanne. Celý
+    projekt je založen na konceptu otevřeného hardware, což znamená, že všechny
+    dokumenty a schémata jsou dostupná pod svobodnou licencí umožňující
+    komukoli využívat e-puck robota na maximum a vyvýjet pro něj ať už
+    software, anebo např. hardwarové nádstavby.
+
+    E-puck robot byl vytvořen s několika kritérii\cite{bonani}:
+    \begin{itemize}
+        \item Stolní velikost -- možnost experimentovat s robotem přímo u
+        počítače je velmi výhodná pro studenty. Pokud se za optimální velikost
+        pracovní plochy považuje 10-ti násobek velikosti robota, tak e-puck se
+        svým průměrem 75mm je ideální pro použití na stole.
+
+        \item Široké spektrum použití -- robota je možné použít nejen pro výuku
+        robotiky, ale také například pro výuku zpracování obrazu nebo zvuku,
+        programování vestavěných systémů, automatizace atd. Toho je docíleno
+        velkým spektrem sensorů.
+
+        \item Uživatelská přívětivost -- při vytváření rozhraní by vždy měl být
+        kladen důraz na jednoduchost. Rozhraní by mělo být intuitivní a
+        důkladně zdokumentované, aby se zrychlil proces učení.
+    \end{itemize}
+
+    Součástí robota je velká škála sensorů a akčních členů. Srdcem robota je
+    mikrokontroler s obvodem dsPIC. Skládá se z 16bitového procesoru a jednotky
+    pro zpracování signálu. Procesor má frekvenci 64 MHz, 8 kB RAM a 144 kB
+    flash paměti. Robot obsahuje následující sensory:
+
+    \begin{itemize}
+        \item Infračervené sensory -- po obvodu robota je 8 IR sensorů. Měří
+        buď vzdálenost od překážek, anebo intenzitu okolního světla. Jedná se o
+        základní sensory využívané pro pohyb mezi překážkami.
+
+        \item Akcelerometr -- 3D akcelerometr slouží k získání vektoru
+        zrychlení robota. Může být použit pro spoustu experimentů (měření
+        náklonu, zrychlení, detekce nárazu, pádu, \ldots).
+
+        \item 3 mikrofony -- více mikrofonů slouží k triangulaci zdroje zvuku,
+        velikost dat získaných z mikrofonů je ovšem na kapacity robota příliš a
+        proto je nutné použít jednotku pro zpracování signálu (DSP).
+
+        \item Barevná kamera -- v přední části robota je kamera s rozlišením
+        640x480, bohužel kvůli paměťovým omezením robota je možné získat pouze
+        část obrazu. I tak je ale možné ji použít pro experimenty s počítačovým
+        viděním.
+    \end{itemize}
+
+    Samotné sensory by samozřejmě byly bez užitku, kdyby robot neměl žádné
+    akční členy. Studenti mohou využít následujících komponent:
+    \begin{itemize}
+        \item 2 krokové motory -- slouží pro pohyb robota, mají rozlišení 1000
+        kroků za jedno otočení kola.
+
+        \item speaker -- ve spojení s mikrofony může sloužit pro dorozumívání s
+        jinými roboty, také jde o výhodný způsob interakce s uživatelem.
+
+        \item 8 LED -- diody jsou rozmístěné po obvodu robota. Slouží jako
+        vizuální rozhraní pro uživatele, anebo pro jiného robota.
+
+        \item Zelená dioda uvnitř robota -- hlavním jejím posláním je vypadat
+        dobře, ale také může být použita pro interakci s jinými objekty.
+
+        \item Přední dioda u kamery -- tato LED nevytváří rozptýlené světlo,
+        ale paprsek, který je možné použít s kamerou pro odhadování vzdálenosti
+        k vzdálenějším překážkám.
+    \end{itemize}
+
+    Ovládání e-puck robota je možné řešit několika způsoby. V první řadě
+    existuje kompatibilní GCC kompilátor, takže je možné psát řídící program,
+    který bude vykonáván přímo uvnitř robota, v programovacím jazyku C. Výrobce
+    navíc dodává knihovnu s intuitivním rozhraním pro ovládání všech součástí.
+    Tento přístup má ovšem několik nevýhod. Cyklus vývoje programu je pomalý,
+    kvůli každé změně v programu je třeba spustit kompilaci na počítači, dále
+    nahrát program do robota a teprve pak je možné změnu vyzkoušet. Dalším
+    problémem je výkon robota, který nemusí stačit pro složitější výpočty.
+
+    Lepším způsobem se tedy zdá využívat program v robotovi pouze pro
+    vykonávání příkazů, které jsou naplánovány v počítači. To je přístup,
+    kterým se zabývá tato práce.
+
+    \section{Synchronní / asynchronní komunikace}
+
+    Pojem komunikace ve světě počítačů označuje předávání dat mezi dvěma
+    programy nebo zařízeními. Příkladem může být komunikace mezi webovým
+    prohlížečem a http serverem při stahování stránky, počítačem a tiskárnou
+    při tisku, atd. Průběh komunikace je vždy velmi podobný, jedna strana pošle
+    zprávu obsahující požadavek, druhá strana zprávu přijme a zpracuje. Pokud
+    ke zpracování potřebuje další informace, pošle odesílateli jako odpověď
+    žádost o jejich dodání a tak si zúčastněné strany vymění role a situace se
+    opakuje.
+
+    Přenos zprávy ovšem může zabrat netriviálně času a tak je tu problém, co
+    bude dělat odesílatel zprávy, zatímco čeká na odpověď. Tady dochází k
+    rozdělení na synchronní (nebo také blokující) a asynchronní (neblokující)
+    komunikaci.
+
+    Při synchronní komunikaci program po odeslání zprávy pozastaví vykonávání
+    dalších instrukcí a čeká dokud nedostane odpověď. Tento přístup je velmi
+    jednoduchý na implementaci (většinou se jedná o zavolání metody, která bude
+    čekat na zprávu), není problém s nekonzistencí dat (než bude program
+    pokračovat v činnosti, obdrží všechny informace).
+
+    Problém ovšem nastává pokud je po programu požadována interaktivita, anebo
+    tato komunikace není jeho jediným úkolem a musí zvládat například
+    obsluhovat více takových blokovaných spojení.
+
+    Asynchronní komunikace řeší některé problémy komunikace synchronní. Po
+    odeslání zprávy program pokračuje ve vykonávání instrukcí, jednou za čas si
+    ale může zkontrolovat, zda-li už nepřišla odpověď a pak na ni zareaguje.
+    Speciálním případem je komunikace řízená událostmi (event-driven), kdy je
+    pro zpracování události přijetí zprávy určena funkce, která je automaticky
+    spuštěna, bez přímé intervence programátora.
+
+    Další překážkou pro synchronní komunikaci jsou ztráty zpráv při přenosu.
+    Může dojít k chybě při přenosu dat a ke ztrátě odeslané zprávy, anebo
+    příchozí odpovědi. Stejně tak se může stát, že adresát zprávy na ni nijak
+    neodpověděl. V takovýchto případech může dojít k tzv. dead-locku, kdy bude
+    odesílatel čekat na zprávu, která nikdy nepřijde a tak nebude moci
+    pokračovat v dalších výpočtech.
+
+    Tento problém neřeší ani asynchronní komunikace, ale velmi zjednodušuje
+    implementaci mechanismů pro jeho zabránění. Protože program se musí sám
+    podívat jestli nepřišla odpověď, tak si také může pamatovat, kdy byla
+    odeslána zpráva a pokud odpověď nedorazí do určitého času, tak zprávu
+    prohlásí za ztracenou a může se pokusit ji poslat znova.
+
+    Ovšem asynchronní komunikace má i své problémy. Odpovědi na zprávy nemusí
+    přijít ve stejném pořadí, v jakém byly odeslány. Tento problém musí řešit
+    například protokol TCP/IP. Řešením je zprávy posílat s pořadovým číslem a
+    toto číslo přidat i k odpovědi. Pak je velmi snadné příchozí zprávy seřadit
+    podle pořadí, v jakém jsou požadovány.
+
+    V této práci je uživateli knihovny dána možnost vybrat si mezi komunikací
+    synchronní a asynchronní. Synchronní komunikace je určena pro rychlé
+    prototypování a zkoušení ovládání robota. Uživatel bude zadávat příkazy a
+    dívat se, jak na ně robot reaguje. Tady je výhodná transparentnost
+    synchronního přístupu. Naopak pro psaní kontrolních programů je větší důraz
+    kladen na spolehlivost. Knihovna zajistí, že příkaz opravdu dojde, v
+    nejhorším případě upozorní uživatele na skutečnost, že robot je
+    neovladatelný (může se stát třeba pokud mu dochází baterie).
+
+    Každá zpráva je opatřena kódem příkazu a pořadovým číslem zprávy, tedy je
+    možné poslat i více stejných zpráv asynchronně (např. několikrát po sobě
+    číst hodnotu ze senzorů) a knihovna rozezná jednotlivé zprávy od sebe.
+
+    \section{Existující řešení}
+
+        \subsection{Cyberbotics' Robot Curriculum}
+
+        \subsection{\ldots}
+
+    \section{Odlišnosti tohoto řešení}
+
+\chapter{Implementace}
+
+    \section{BTcom firmware}
+
+    Robot e-puck v sobě obsahuje programovatelný mikroprocesor. Většina ze
+    stávajících řešení se zaměřuje na psaní programu právě pro tento
+    mikroprocesor. Ty jsou, co se výpočetního výkonu týče, velmi limitovány.
+    Tato práce se však v tomto ohledu liší od ostatních. Programátor píše
+    program, který běží na PC a pouze jednotlivé příkazy jsou posílány do
+    robota ke zpracování.
+
+    Je tedy potřeba, aby v robotovi byl software, který dokáže přijímat
+    příkazy, zpracovávat je a odesílat odpovědi. K tomuto účelu byl upraven
+    tvůrci robota poskytovaný firmware BTcom. Jedná se o jednoduchý program,
+    který společně se standardní knihovnou dodávanou k e-puck robotovi
+    zpřístupňuje všechny senzory a akční členy robota pomocí jednoduchého
+    protokolu přes Bluetooth rozhraní.
+
+    Příkazy je možné posílat v textovém nebo binárním režimu. Textový režim
+    slouží k posílání jednoduchých dat jako je ovládání led diod nebo nastavení
+    rychlosti motorů. Binární režim slouží k získávání větších dat, jako jsou
+    například snímky z kamery.
+
+    Program funguje velmi přímočaře, jedná se o jednu nekonečnou smyčku, ve
+    které načítá příkazy, zavolá příslušné funkce a odešle odpověď.
+
+    Díky tomu, že je program takto prostý, je jednoduché provozovat synchronní
+    komunikaci. Program načítá příkazy přesně tak, jak mu přijdou, jeden po
+    druhém. Na každý odpoví a teprve pak se přesune na zpracování dalšího
+    příkazu. Problém ovšem nastane, pokud dojde k poruše spojení a nějaký
+    příkaz nedorazí. Program nedokáže problémy tohoto typu rozpoznat. Navíc
+    pokud program pracuje v binárním režimu, tak posílá pouze data, bez
+    jakéhokoli označení příslušnosti k příkazu, nebo informace o povaze dat.
+    Jedná se pak téměř o neřešitelný problém, rozpoznat ke kterému příkazu data
+    přísluší.
+
+    Bylo provedeno několik úprav, které se snaží vyřešit problémy stávajícího
+    řešení a také umožňují použití asynchronní komunikace. Ke každému příkazu
+    poslanému robotovi se přidává časový otisk, jedná se o 8--bitové číslo,
+    které určuje pořadí příkazu v sérii. Ve své odpovědi pak robot uvede jak
+    kód označující typ příkazu, na který odpovídá, tak také došlý otisk. Díky
+    tomu je možné téměř jednoznačně (otisk se samozřejmě opakuje každých 255
+    příkazů) svázat odpoveď se zaslaným příkazem. Pokud tedy nějaké číslo chybí
+    v posloupnosti přijatých odpovědí, je jasné, že tato odpověď nedorazila.
+
+    Do firmware byly také přidány nové příkazy. Robot obsahuje 3 mikrofony, ale
+    není jednoduché nasnímaná data odeslat do PC kvůli jejich velikosti. Pro
+    programy, které jsou spouštěny přímo v robotovi, ovšem existuje knihovna
+    pro FFT (rychlou Fourierovu transformaci). Ta byla byla přidána do BTcom
+    firmwaru a díky ní je možné jedním příkazem zapnout snímání dat z mikrofonu
+    a druhým příkazem na nasnímaných datech provést transformaci a odeslat je
+    do PC.
+
+    Dalším problémem, se kterým se musí uživatel e-puck robota potýkat, je
+    kapacita baterie a nepřítomnost jakéhokoli ukazatele jejího stavu. Tento
+    problém byl alespoň částečně vyřešen, do kontrolního programu v robotovi
+    bylo přidáno přerušení, které je aktivováno právě tehdy, když napětí na
+    baterii již není dostatečné pro bezproblémový provoz. Při vyvolání tohoto
+    přerušení jsou zapnuty všechny LED na obvodu robota a tak uživatel dostane
+    vizuální upozornění, že je třeba baterii vyměnit.
+
+    \section{Asynchronní komunikace}
+
+    \section{Ovládání robota}
+
+\chapter{Uživatelská dokumentace}
+
+    \section{Připojení robota}
+
+    \subsection{Příprava}
+
+    E-puck robot s počítačem komunikuje pomocí bluetooth. Pro připojení robota
+    k počítači na operačním systému Linux je třeba mít nainstalovánu podporu
+    pro bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
+    bluez-utils}, dále je potřeba mít software pro správu pin ({\tt bluez-pin,
+    bluez-gnome, bluetooth-applet, \ldots}).
+
+    Nejprve je potřeba zjistit adresu robota. Lze využít utilitu {\tt hcitool}:
+
+    \begin{verbatim}
+    $ hcitool scan
+    \end{verbatim}
+
+    Adresa robota se použije při nastavení virtuálního sériového portu v souboru {\tt /etc/bluetooth/rfcomm.conf}:
+
+    \begin{verbatim}
+    rfcomm0 {
+        bind yes;
+        device 08:00:17:2C:E0:88; # Adresa zařízení
+        channel 1;
+        comment "e-puck_0006";    # Vlastní komentář
+    }
+    \end{verbatim}
+
+    \subsection{Přípojení}
+    Následuje již jen vlastní připojení, při kterém se systém může zeptat na
+    pin robota. Ten je napsán na robotovi (čtyřmístné číslo na horní straně
+    robota).
+
+    \begin{verbatim}
+    $ rfcomm bind rfcomm0
+    $ rfcomm connect rfcomm0
+    \end{verbatim}
+
+    Po těchto příkazech by už mělo být vytvořené spojení s robotem a je možné
+    mu začít posílat příkazy pomocí knihovny.
+
+    \subsection{Přehled možných chyb}
+    Při připojení mohly nastat chyby, nejčastější jsou tyto:
+    \begin{itemize}
+    \item{{\em Can't connect RFCOMM socket: Connection refused} -- Nejspíše neběží žádná aplikace, která by se na heslo zeptala. Je třeba spustit např. bluetooth-applet.}
+    \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná příčína je už připojené zařízení. Buď už běží rfcomm, anebo si
+        někdo robota přivlastnil. Pro nový pokus o připojení stačí:
+            \begin{verbatim}
+    $ rfcomm release rfcomm0
+    $ rfcomm connect rfcomm0
+            \end{verbatim}
+    }
+    \end{itemize}
+
+    \subsection{Vytvoření připojení v pythonu}
+
+    Pro ovládání robota slouží modul {\tt epuck.controller} a objekt {\tt Controller}. Vytvoření připojení je velmi jednoduché:
+    \begin{verbatim}
+    from epuck.controller import Controller
+
+    controller = Controller("/dev/rfcomm0")
+    \end{verbatim}
+    První parametr určuje cestu k vytvořenému portu (zde {\tt /dev/rfcomm0}).
+    Je možné také určit, zda-li má komunikace probíhat synchronně (v základu),
+    anebo asynchronně. Pak je potřeba zadat ještě argument: {\tt
+    asynchronous=True}.
+
+    Další komunikace s robotem pak probíhá přes instanci {\tt controller}.
+
+    \section{Posílání příkazů}
+
+    \section{Přehled příkazů}
+
+\chapter{Příklady kontrolních programů}
+
+\chapter{Závěr}
+
+    \section{Zhodnocení práce}
+
+    \section{Benchmark knihovny}
+
+
+%%% Seznam literatury
+%%%
+%%% Literatura se řadí abecedně. Úvádí se pouze literatura, na kterou se v textu odkazuje.
+%%% Při odkazu na knihu se vždy uvádějí čísla stránek.
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Literatura}
+%\bibitem{cyberbotics}Michel O., Rohrer F., Heiniger N.: {\em Cyberbotics' Robot Curriculum} [online]. 2010-08-18 [cit. 2010-12-18]. Dostupné z WWW: \url{http://en.wikibooks.org/wiki/Cyberbotics'_Robot_Curriculum}.
+ \bibitem{bonani}Mondada F., Bonani M., Raemy X., Pugh J., Cianci C.,
+ Klaptocz A., Magnenat S., Zufferey J.-C., Floreano D., Martinoli A.: {\em The
+     e-puck a Robot Designed for Education in Engineering}, Proceedings of the
+     9th Conference on Autonomous Robot Systems and Competitions, 1(1) (2009) 59--65.
+%\bibitem{abraham-marsden}Abraham R., Marsden J. E.: {\em Foundations of Mechanics}, Addison-Wesley, Reading, 1985.
+%\bibitem{derbes}Derbes D.: {\em Reinventing the wheel: Hodographic solutions to the Kepler problems}, Am. J. Phys. {\bf 69} (2001) 481--489.
+%\bibitem{kvasnica}Kvasnica J.: {\em Teorie elektromagnetického pole}, Academia, Praha, 1985.
+\end{thebibliography}
+
+\end{document}
