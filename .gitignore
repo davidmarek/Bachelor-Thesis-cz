@@ -1,0 +1,11 @@
+*.aux
+*.dvi
+*.log
+*.out
+*.mp
+*.mps
+*.pdf
+*.toc
+*.txt
+*~
+.*.swp
