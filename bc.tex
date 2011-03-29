@@ -148,6 +148,14 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
 \chapter{Teorie}
 
+    V této části bych rád uvedl všechny základní součásti, na kterých má práce
+    stojí a také bych se rád zmínil o způsobech jak se řeší ovládání robota
+    jinde. Nejprve je nutné zjistit jaké vlastnosti má robot e-puck, abychom
+    pak dále mohli posoudit do jaké míry využíváme jeho předností a také
+    zhodnotit využitelnost práce v praxi. Dále je potřeba zmínit jakými způsoby
+    může probíhat komunikace, jaké úskalí přináší oddělení kontrolního programu
+    od hardware a jak se dají mírnit rizika z tohoto plynoucí.
+
     \section{E-puck robot}
     E-puck je miniaturní robot vytvořený pro výukové účely na akademické
     úrovni. Vytvořen byl v Ecole Polytechnique Fédérale de Laussanne. Celý
@@ -171,6 +179,10 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         \item Uživatelská přívětivost -- při vytváření rozhraní by vždy měl být
         kladen důraz na jednoduchost. Rozhraní by mělo být intuitivní a
         důkladně zdokumentované, aby se zrychlil proces učení.
+
+        \item Možnost vzdáleného ovládání -- robot v sobě obsahuje bluetooth
+        modul, který se pro něj chová jako sériové zařízení, přes které dokáže
+        komunikovat s počítačem.
     \end{itemize}
 
     Součástí robota je velká škála sensorů a akčních členů. Srdcem robota je
@@ -203,7 +215,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         \item 2 krokové motory -- slouží pro pohyb robota, mají rozlišení 1000
         kroků za jedno otočení kola.
 
-        \item speaker -- ve spojení s mikrofony může sloužit pro dorozumívání s
+        \item Speaker -- ve spojení s mikrofony může sloužit pro dorozumívání s
         jinými roboty, také jde o výhodný způsob interakce s uživatelem.
 
         \item 8 LED -- diody jsou rozmístěné po obvodu robota. Slouží jako
@@ -228,7 +240,9 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
     Lepším způsobem se tedy zdá využívat program v robotovi pouze pro
     vykonávání příkazů, které jsou naplánovány v počítači. To je přístup,
-    kterým se zabývá tato práce.
+    kterým se zabývá tato práce. Získáme tím jednu obrovskou výhodu, kterou je
+    výpočetní síla stolního počítače, na druhou stranu s ní ovšem musíme
+    přijmout i břímě problémů s komunikací.
 
     \section{Synchronní / asynchronní komunikace}
 
@@ -291,9 +305,21 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     nejhorším případě upozorní uživatele na skutečnost, že robot je
     neovladatelný (může se stát třeba pokud mu dochází baterie).
 
-    Každá zpráva je opatřena kódem příkazu a pořadovým číslem zprávy, tedy je
-    možné poslat i více stejných zpráv asynchronně (např. několikrát po sobě
-    číst hodnotu ze senzorů) a knihovna rozezná jednotlivé zprávy od sebe.
+    Máme zde tu výhodu, že e-puck robot vždy pracuje synchronně. Na začátku
+    čeká, dokud mu nedojde příkaz, pak se pustí do jeho zpracování. V tu chvíli
+    ovšem přestává poslouchat bluetooth spojení a tedy každý další zaslaný
+    příkaz bude ztracen. Po zpracování příkazu robot pošle odpověď a opět začne
+    čekat na příkazy z počítače. Tedy vždy platí, že robot buď zpracuje zprávy
+    v takovém pořadí v jakém byly poslány, anebo případně některé z nich
+    vynechá.
+
+    Při asynchronní komunikaci tedy stačí mít frontu příkazů a kontrolovat, že
+    je robot postupně vykonává. To je také důvod proč jsou zprávy opatřeny
+    kódem příkazu a pořadovým číslem, vždy tak víme na který příkaz právě robot
+    odpověděl a který by tedy měl následovat. Díky tomu je možné poslat více
+    příkazů, které na první pohled vypadají stejně (např. získání informací ze
+    senzorů) a zároveň je odlišit od situace, kdy robot neodpověděl včas a tak
+    byla zpráva znovu poslána (bylo totiž předpokládáno, že zprávu nedostal).
 
     \section{Existující řešení}
 
