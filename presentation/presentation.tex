@@ -1,7 +1,7 @@
 \documentclass{beamer}
 
 \mode<presentation> {
-    \usetheme[compress]{Prague}
+    \usetheme[compress]{Amsterdam}
     \setbeamercovered{transparent}
 }
 
@@ -11,6 +11,18 @@
 \usepackage{palatino}
 \usepackage{graphicx}
 \usepackage{epstopdf}
+
+\include{pygments}
+
+\AtBeginSection[]%
+{%
+\begin{frame}%
+  \begin{center}%
+    \usebeamerfont{section title}\insertsection%
+  \end{center}%
+\end{frame}%
+}
+
 
 \title{E-puck knihovna pro Python}
 \author{David Marek}
@@ -29,8 +41,6 @@
 \end{frame}
 
 \section{Představení e-puck robota}
-
-\subsection{Úvod}
 
 \begin{frame}
     \frametitle{E-Puck}
@@ -52,7 +62,6 @@
     \end{columns}
 \end{frame}
 
-\subsection{Senzory a akční členy}
 
 \begin{frame}
     \frametitle{Senzory a akční členy}
@@ -212,10 +221,80 @@
 
 \section{Připojení}
 
-\begin{frame}[t]
+\begin{frame}
+    \frametitle{Příprava PC}
     \begin{itemize}
-        \item Pokus
+        \item Potřeba funkční bluetooth
+        \item Balíky {\tt bluez-firmware}, {\tt bluez-utils}
+        \item Utilita na zaslání PIN ({\tt bluez-pin}, \ldots)
     \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Nastavení rfcomm}
+    \begin{block}{Získat adresu robota}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nv}{\PYZdl{} }hcitool scan
+Scanning ...
+	10:00:E8:52:C6:3E	e-puck\PYZus{}1055
+\end{Verbatim}
+    \end{block}
+
+    \begin{block}{Nastavení {\tt /etc/bluetooth/rfcomm.conf}}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+lScalar+lScalarPlain}{rfcomm2}\PY{l+lScalar+lScalarPlain}{ }\PY{l+lScalar+lScalarPlain}{\PYZob{}}
+    \PY{l+lScalar+lScalarPlain}{bind}\PY{l+lScalar+lScalarPlain}{ }\PY{l+lScalar+lScalarPlain}{yes;}
+    \PY{l+lScalar+lScalarPlain}{device}\PY{l+lScalar+lScalarPlain}{ }\PY{l+lScalar+lScalarPlain}{10:00:E8:52:C6:3E;} \PY{c+c1}{\PYZsh{} Adresa z hcitool}
+    \PY{l+lScalar+lScalarPlain}{channel}\PY{l+lScalar+lScalarPlain}{ }\PY{l+lScalar+lScalarPlain}{1;}
+    \PY{l+lScalar+lScalarPlain}{comment}\PY{l+lScalar+lScalarPlain}{ }\PY{l+lScalar+lScalarPlain}{"e-puck\PYZus{}1055";}    \PY{c+c1}{\PYZsh{} Komentář}
+{\PYZcb{}}
+\end{Verbatim}
+
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Vytvoření spojení}
+    \begin{block}{Připojení pomocí {\tt rfcomm}}
+    \begin{Verbatim}[fontsize=\small]
+# rfcomm connect rfcomm2
+Connected /dev/rfcomm2 to 10:00:E8:52:C6:3E on channel 1
+Press CTRL-C for hangup
+    \end{Verbatim}
+    \end{block}
+
+    \begin{alertblock}{Možné chyby}
+        {\em Can’t connect RFCOMM socket: Connection refused}
+        \begin{itemize}
+            \item Není spuštěná aplikace, která by předala PIN
+        \end{itemize}
+        {\em Can’t create RFCOMM TTY: Address already in use}
+        \begin{itemize}
+            \item Robot už je připojen
+            \item Jiná aplikace s ním stále komunikuje
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Nahrání firmware}
+    \begin{itemize}
+        \item Používá se {\tt epuckupload}
+        \item Je potřeba mít aktivní připojení
+        \item Robot dokáže přijímat nový firmware pouze pár sekund po restartu
+    \end{itemize}
+    \begin{block}{Postup při nahrávání}
+        \begin{enumerate}
+            \item Spuštění nahrávání
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nv}{\PYZdl{} }epuckupload -f BTcom.hex rfcomm2
+\end{Verbatim}
+            \item Restartování robota
+            \item Vyčkání na konec nahrávání
+            \item Robot připraven k práci
+        \end{enumerate}
+    \end{block}
+
 \end{frame}
 
 \section{Komunikace}
@@ -226,7 +305,6 @@
     \end{itemize}
 \end{frame}
 
-\subsection{Synchronní}
 
 \begin{frame}
     \begin{itemize}
@@ -234,7 +312,6 @@
     \end{itemize}
 \end{frame}
 
-\subsection{Asynchronní}
 
 \begin{frame}
     \begin{itemize}
