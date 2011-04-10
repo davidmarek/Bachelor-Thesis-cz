@@ -347,6 +347,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     zpřístupňuje všechny senzory a akční členy robota pomocí jednoduchého
     protokolu přes Bluetooth rozhraní.
 
+    \subsection{Příkazy}
+
     Příkazy je možné posílat v textovém nebo binárním režimu. Textový režim
     slouží k posílání jednoduchých dat jako je ovládání led diod nebo nastavení
     rychlosti motorů. Binární režim slouží k získávání větších dat, jako jsou
@@ -360,27 +362,57 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     první určuje rychlost levého kola, druhé rychlost pravého kola. Nakonec je
     znak řádku, který určuje konec příkazu.
 
+    Binární příkazy se také rozlišují písmenem, avšak aby bylo rozpoznání
+    zjednodušeno (přesněji řečeno, aby stačilo jedno porovnání), tak kód pro
+    binární příkazy je záporný. Firmware přečte kód příkazu jako 8--bitové
+    číslo se znaménkem. Pokud je záporné, tak automaticky předpokládá, že vše
+    co následuje je binární příkaz. Protože data v příkazu nejsou nijak
+    kódována, tak není např. možné předpokládat, že se v příkazu neobjeví číslo
+    10, které v ASCII tabulce reprezentuje znak konce řádku. Z toho důvodu jsou
+    příkazy ukončeny bytem 0.
+
+    Odpovědi v binárním režimu začínají hlavičkou, která obsahuje identifikaci
+    a velikost následující odpovědi. Díky tomu nemusí být nějak speciálně
+    ukončovány.
+
+    Hlavní výhodou binárního režimu tedy je úspora dat při přenosu a možnost
+    vyhnout se kódování odpovědi a posílat ji jako surová data.
+
+    \subsection{Funkcionalita}
+
     Firmware funguje velmi přímočaře, jedná se o jednu nekonečnou smyčku, ve
     které načítá příkazy, zavolá příslušné funkce a odešle odpověď.
 
     Díky tomu, že je program takto prostý, je jednoduché provozovat synchronní
     komunikaci. Program načítá příkazy přesně tak, jak mu přijdou, jeden po
     druhém. Na každý odpoví a teprve pak se přesune na zpracování dalšího
-    příkazu. Problém ovšem nastane, pokud dojde k poruše spojení a nějaký
-    příkaz nedorazí. Program nedokáže problémy tohoto typu rozpoznat. Navíc
-    pokud program pracuje v binárním režimu, tak posílá pouze data, bez
-    jakéhokoli označení příslušnosti k příkazu, nebo informace o povaze dat.
-    Jedná se pak téměř o neřešitelný problém, rozpoznat ke kterému příkazu data
+    příkazu. V původní verzi ovšem nastane problém, pokud dojde k poruše
+    spojení a nějaký příkaz nedorazí. Program nedokázal problémy tohoto typu
+    rozpoznat. Navíc pokud program pracuje v binárním režimu, tak posílal pouze
+    data, bez jakéhokoli označení příslušnosti k příkazu, nebo informace o
+    povaze dat. Proto bylo provedeno několik úprav, v původním stavu se totiž
+    jednalo téměř o neřešitelný problém, rozpoznat ke kterému příkazu data
     přísluší.
 
-    Bylo provedeno několik úprav, které se snaží vyřešit problémy stávajícího
-    řešení a také umožňují použití asynchronní komunikace. Ke každému příkazu
-    poslanému robotovi se přidává časový otisk, jedná se o 8--bitové číslo,
-    které určuje pořadí příkazu v sérii. Ve své odpovědi pak robot uvede jak
-    kód označující typ příkazu, na který odpovídá, tak také došlý otisk. Díky
-    tomu je možné téměř jednoznačně (otisk se samozřejmě opakuje každých 255
-    příkazů) svázat odpoveď se zaslaným příkazem. Pokud tedy nějaké číslo chybí
-    v posloupnosti přijatých odpovědí, je jasné, že tato odpověď nedorazila.
+    \subsection{Provedené úpravy}
+
+    Provedené úpravy se snaží vyřešit problémy stávajícího řešení a také
+    umožňují použití asynchronní komunikace. Ke každému příkazu poslanému
+    robotovi se přidává časový otisk, jedná se o 8--bitové číslo, které určuje
+    pořadí příkazu v sérii. Ve své odpovědi pak robot uvede jak kód označující
+    typ příkazu, na který odpovídá, tak také došlý otisk. Díky tomu je možné
+    téměř jednoznačně (otisk se samozřejmě opakuje po určité době znova) svázat
+    odpoveď se zaslaným příkazem. Pokud tedy nějaké číslo chybí v posloupnosti
+    přijatých odpovědí, je jasné, že tato odpověď nedorazila.
+
+    Odpovědi na binární příkazy nyní vždy obsahují hlavičku, která je pro
+    všechny stejná a obsahuje samozřejmě kód příkazu, na který odpovídá, a také
+    jeho timestamp, ale hlavně obsahuje i velikost dat, která budou následovat.
+    Při binární komunikaci totiž není možné rozpoznat konec přenosu dat. V
+    původní verzi firmware se počítalo s tím, že po každém odeslaném příkazu
+    bude uživatel čekat na jeho odpověď a tedy bude vědět jakého formátu jsou
+    data, která očekává. Pokud se ovšem snažíme o asynchronní komunikaci, tak
+    bychom neměli o příchozích datech nic předpokládat.
 
     Do firmware byly také přidány nové příkazy. Robot obsahuje 3 mikrofony, ale
     není jednoduché nasnímaná data odeslat do PC kvůli jejich velikosti. Pro
@@ -399,6 +431,56 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     vizuální upozornění, že je třeba baterii vyměnit.
 
     \section{Asynchronní komunikace}
+
+    Knihovna umožňuje synchronní i asynchronní komunikaci. Synchronní
+    komunikace je dostatečně jednoduchá, tudíž nepotřebuje dlouhé vysvětlování,
+    opravdu se děje přesně to, co uživatel očekává. To je také jejím účelem.
+    Oproti tomu asynchronní komunikace se snaží co nejvíce usnadnit ovládání
+    robota, skrýt některé složitější mechanismy komunikace před uživatelem, a
+    proto si zaslouží důkladné představení.
+
+    Základním požadavkem asynchronní komunikace je oddělení zavolání příkazu od
+    jeho provedení. Provedení totiž může trvat delší dobu a to se může ukázat v
+    některých aplikacích jako klíčový problém. Příkazy tedy nečekají na
+    odpověď, ovšem jak se pak uživatel dostane k odpovědi? Zavolání příkazu
+    nemůže vrátit odpověď, ale na druhou stranu může vrátit uživateli odkaz na
+    potenciální odpověď. Toho se pak může dotázat, zda-li odpověď přišla a
+    nakonec ji také i získat. Pro vysvětlení jak tento odkaz funguje bude
+    potřeba osvětlit vnitřnosti asynchronní komunikace.
+
+    Asynchronní komunikace už od připojení robota probíhá v samostatném vláknu,
+    které je nezávislé od vlákna, ve kterém běží program uživatele. Toto
+    komunikační vlákno zastává tři funkce:
+
+    \begin{enumerate}
+        \item Zpracování příchozí komunikace
+        \item Odesílání příkazů
+        \item Kontrola chyb
+    \end{enumerate}
+
+    Příchozí komunikace je získávána pomocí sériového připojení vytvořeného
+    knihovnou pySerial. Připojení podporuje standardní metody pro práci se
+    sockety a je tedy možné používat funkci select operačního systému, která
+    dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z
+    nich. První připojení, které je kontrolováno tedy je sériové připojení s
+    robotem. Další spojení slouží k získávání nových příkazů.
+
+    Při odesílání příkazů se vlastně jedná o přenesení informace v reálném čase
+    z jednoho vlákna do druhého. Příkaz je zavolán ve vláknu s uživatelským
+    programem, ovšem samotná zpráva robotovi musí být odeslána z vlákna
+    asynchronní komunikace. V opačném případě by uživatelský program byl
+    zpomalen přenosem k robotovi, navíc asynchronní vlákno má větší přehled o
+    spojení s robotem a tedy např. nedojde ke kolizi mezi posíláním a
+    přijímáním dat.
+
+    V uživatelském vláknu je příkaz zařazen do fronty pro odchozí příkazy,
+    asynchronní vlákno je pak následovně informováno o novém příkazu, nakonec
+    je vytvořen odkaz na příkaz, který je vrácen uživateli. Žádný z těchto
+    příkazů není blokující, tedy odeslání příkazu nestojí uživatele téměř nic.
+
+    \subsection{Zpracování příkazů}
+
+
 
     \section{Ovládání robota}
 
