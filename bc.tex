@@ -161,7 +161,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     úrovni. Vytvořen byl v Ecole Polytechnique Fédérale de Laussanne. Celý
     projekt je založen na konceptu otevřeného hardware, což znamená, že všechny
     dokumenty a schémata jsou dostupná pod svobodnou licencí umožňující
-    komukoli využívat e-puck robota na maximum a vyvýjet pro něj ať už
+    komukoli využívat e-puck robota na maximum a vyvíjet pro něj ať už
     software, anebo např. hardwarové nádstavby.
 
     E-puck robot byl vytvořen s několika kritérii\cite{bonani}:
@@ -453,8 +453,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     komunikační vlákno zastává tři funkce:
 
     \begin{enumerate}
-        \item Zpracování příchozí komunikace
         \item Odesílání příkazů
+        \item Zpracování příchozí komunikace
         \item Kontrola chyb
     \end{enumerate}
 
@@ -464,6 +464,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z
     nich. První připojení, které je kontrolováno tedy je sériové připojení s
     robotem. Další spojení slouží k získávání nových příkazů.
+
+    \subsection{Odeslání příkazu}
 
     Při odesílání příkazů se vlastně jedná o přenesení informace v reálném čase
     z jednoho vlákna do druhého. Příkaz je zavolán ve vláknu s uživatelským
@@ -478,11 +480,57 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     je vytvořen odkaz na příkaz, který je vrácen uživateli. Žádný z těchto
     příkazů není blokující, tedy odeslání příkazu nestojí uživatele téměř nic.
 
-    \subsection{Zpracování příkazů}
+    Zbytek odeslání příkazu už probíhá v asynchronním vláknu. Funkce select je
+    přerušena informací o novém příkazu. Následně je příkaz odebrán z fronty,
+    odeslán robotovi a zařazen do fronty odeslaných zpráv. Zde čeká na příchozí
+    odpověď. Uživatel stále vlastní odkaz na tento příkaz, i když se přesunul.
 
+    \subsection{Zpracování odpovědi}
 
+    Pokud se robot rozhodne odeslat odpověď na příkaz, tak se to asynchronní
+    vlákno dozví díky funkci select, která označí spojení, které je připraveno
+    pro čtení. Následuje tedy přečtení a zpracování odpovědi. Nejprve je
+    potřeba rozhodnout, zda-li se jedná o binární nebo textovou odpověď. Na to
+    stačí přečíst první znak, ten určuje na který příkaz robot odpovídá. Další
+    znak určí timestamp, díky němu už je možné jednoznačně najít příkaz ve
+    frontě odeslaných, kterému odpověď patří.
+
+    Odpověď pak už je pouze předána příkazu, který si ji uloží. Příkaz je
+    následně odebrán z fronty odeslaných příkazů. Pokud si uživatel uložil
+    odkaz na tento příkaz, tak stále má možnost získat odpověď. V opačném
+    případě už na objekt nic neukazuje a tedy bude smazán.
+
+    \subsection{Časový limit}
+
+    Může se stát, že příkaz k robotovi nedorazí. Tato skutečnost se těžko
+    rozpoznává. Robotovi zabírá vykonání příkazu delší dobu, anebo o příkazu
+    vůbec neví? Kdy už se má příkaz považovat za ztracený? Pro vyřešení těchto
+    problémů slouží časový limit. Pro každý příkaz má robot přidělen časový
+    limit v kterém musí odpovědět. Časový limit je vždy dán funkci select,
+    která vlákno zablokuje právě na tuto dobu. Následně dojde ke kontrole
+    příkazů. Každý příkaz, který už je ve frontě příliš dlouho, je označen za
+    ztracený a poslán znova.
 
     \section{Ovládání robota}
+
+    Pokud je zajištěna komunikace s robotem, tak samotné jeho ovládání už je
+    velmi jednoduché. Při vytváření ovladače robota musí uživatel specifikovat,
+    zda-li chce komunikaci synchronní anebo asynchronní. Hlavní změna, kterou
+    pozná, je v návratové hodnotě příkazů. Při synchronní komunikaci příkazy
+    vrací rovnou výsledek, při asynchronní dostane nejprve odkaz na příkaz. Z
+    toho důvodu není možné psát programy, které budou fungovat se synchronní i
+    asynchronní komunikací.
+
+    Zaslání příkazu je pouhé zavolání funkce a předání správných parametrů.
+    Ovladač se sám stará o vytvoření příkazu, přidá k němu timestamp, zakóduje
+    parametry a předá k odeslání.
+
+    Stejně tak ovladač zpracovává příchozí odpovědi, než vydá uživateli
+    výsledek. U jednoduchých příkazů, jako je třeba nastavení rychlosti motorů,
+    jde pouze o získání dvou čísel z řetězce. U složitějších příkazů už se může
+    jednat o netriviální činnost, například při získání fotky je potřeba
+    převést fotku z formátu, který používá robot, do formátu standardní
+    knihovny pythonu.
 
 \chapter{Uživatelská dokumentace}
 
