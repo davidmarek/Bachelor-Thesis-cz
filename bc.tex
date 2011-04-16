@@ -22,6 +22,7 @@
 %\usepackage{index} % nutno použít v případě tvorby rejstříku balíčkem makeindex
 %\usepackage{fancybox} % umožňuje pokročilé rámečkování :-)
 \usepackage[pdftex]{graphicx} % nezbytné pro standardní vkládání obrázků do dokumentu
+\usepackage{hyperref}
 \usepackage{epstopdf}
 \usepackage{url}
 
@@ -152,11 +153,14 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     stojí a také bych se rád zmínil o způsobech jak se řeší ovládání robota
     jinde. Nejprve je nutné zjistit jaké vlastnosti má robot e-puck, abychom
     pak dále mohli posoudit do jaké míry využíváme jeho předností a také
-    zhodnotit využitelnost práce v praxi. Dále je potřeba zmínit jakými způsoby
-    může probíhat komunikace, jaká úskalí přináší oddělení kontrolního programu
-    od hardware a jak se dají mírnit rizika z tohoto plynoucí.
+    zhodnotit využitelnost práce v praxi. Popis e-puck robota je v sekci
+    \ref{e-puck robot}. Dále je potřeba zmínit jakými způsoby může probíhat
+    komunikace, jaká úskalí přináší oddělení kontrolního programu od hardware a
+    jak se dají mírnit rizika z tohoto plynoucí, tím se zabývá sekce
+    \ref{sync/async}.
 
     \section{E-puck robot}
+    \label{e-puck robot}
     E-puck je miniaturní robot vytvořený pro výukové účely na akademické
     úrovni. Vytvořen byl v Ecole Polytechnique Fédérale de Laussanne. Celý
     projekt je založen na konceptu otevřeného hardware, což znamená, že všechny
@@ -245,6 +249,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     přijmout i břímě problémů s komunikací.
 
     \section{Synchronní / asynchronní komunikace}
+    \label{sync/async}
 
     Pojem komunikace ve světě počítačů označuje předávání dat mezi dvěma
     programy nebo zařízeními. Příkladem může být komunikace mezi webovým
@@ -258,43 +263,55 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     Přenos zprávy ovšem může zabrat netriviálně času a tak je tu problém, co
     bude dělat odesílatel zprávy, zatímco čeká na odpověď. Tady dochází k
     rozdělení na synchronní (nebo také blokující) a asynchronní (neblokující)
-    komunikaci.
+    komunikaci. Popisem synchronní komunikace se zabývá sekce \ref{sync},
+    popisem asynchronní komunikace sekce \ref{async}. A nakonec je v sekci
+    \ref{comm-epuck} popsáno jak byly tyto principy uplatněny v praxi.
+
+    \subsection{Synchronní komunikace}
+    \label{sync}
 
     Při synchronní komunikaci program po odeslání zprávy pozastaví vykonávání
     dalších instrukcí a čeká dokud nedostane odpověď. Tento přístup je velmi
-    jednoduchý na implementaci (většinou se jedná o zavolání metody, která bude
-    čekat na zprávu), není problém s nekonzistencí dat (než bude program
-    pokračovat v činnosti, obdrží všechny informace).
+    jednoduchý na implementaci (většinou se jedná o zavolání metody, která
+    neskončí, dokud neobdrží zprávu), není problém s nekonzistencí dat (než
+    bude program pokračovat v činnosti, obdrží všechny informace).
 
-    Problém ovšem nastává pokud je po programu požadována interaktivita, anebo
-    tato komunikace není jeho jediným úkolem a musí zvládat například
-    obsluhovat více takových blokovaných spojení.
-
-    Asynchronní komunikace řeší některé problémy komunikace synchronní. Po
-    odeslání zprávy program pokračuje ve vykonávání instrukcí, jednou za čas si
-    ale může zkontrolovat, zda-li už nepřišla odpověď a pak na ni zareaguje.
-    Speciálním případem je komunikace řízená událostmi (event-driven), kdy je
-    pro zpracování události přijetí zprávy určena funkce, která je automaticky
-    spuštěna, bez přímé intervence programátora.
-
-    Další překážkou pro synchronní komunikaci jsou ztráty zpráv při přenosu.
+    Překážkou pro synchronní komunikaci jsou ovšem ztráty zpráv při přenosu.
     Může dojít k chybě při přenosu dat a ke ztrátě odeslané zprávy, anebo
     příchozí odpovědi. Stejně tak se může stát, že adresát zprávy na ni nijak
-    neodpověděl. V takovýchto případech může dojít k tzv. dead-locku, kdy bude
+    neodpověděl. V takovýchto případech lehce dojde k tzv. dead-locku, kdy bude
     odesílatel čekat na zprávu, která nikdy nepřijde a tak nebude moci
     pokračovat v dalších výpočtech.
 
-    Tento problém neřeší ani asynchronní komunikace, ale velmi zjednodušuje
-    implementaci mechanismů pro jeho zabránění. Protože program se musí sám
-    podívat jestli nepřišla odpověď, tak si také může pamatovat, kdy byla
-    odeslána zpráva a pokud odpověď nedorazí do určitého času, tak zprávu
-    prohlásí za ztracenou a může se pokusit ji poslat znova.
+    \subsection{Asynchronní komunikace}
+    \label{async}
 
-    Ovšem asynchronní komunikace má i své problémy. Odpovědi na zprávy nemusí
-    přijít ve stejném pořadí, v jakém byly odeslány. Tento problém musí řešit
+    Pokud je po programu požadována interaktivita, anebo komunikace není jeho
+    jediným úkolem a musí zvládat například obsluhovat více blokovaných
+    spojení, tak synchronní komunikace přestává stačit.
+
+    Asynchronní komunikace řeší některé problémy komunikace synchronní. Po
+    odeslání zprávy program pokračuje ve vykonávání instrukcí, nečeká na
+    odpověď. Může si ale kdykoli zkontrolovat, zda-li už nepřišla odpověď a pak
+    ji teprve načte a zpracuje. Speciálním případem je komunikace řízená
+    událostmi (event-driven), kdy je pro zpracování události přijetí zprávy
+    určena funkce, která je automaticky spuštěna, bez přímé intervence
+    programátora.
+
+    Asynchronní komunikace velmi zjednodušuje vyřešení problémů se ztrátou
+    zpráv. Protože program se musí sám podívat jestli nepřišla odpověď, tak si
+    také může pamatovat, kdy byla odeslána zpráva a pokud odpověď nedorazí do
+    určitého času, tak zprávu prohlásí za ztracenou a může se pokusit ji poslat
+    znova.
+
+    I asynchronní komunikace má své problémy. Odpovědi na zprávy nemusí přijít
+    ve stejném pořadí, v jakém byly odeslány. Tento problém musí řešit
     například protokol TCP/IP. Řešením je zprávy posílat s pořadovým číslem a
     toto číslo přidat i k odpovědi. Pak je velmi snadné příchozí zprávy seřadit
     podle pořadí, v jakém jsou požadovány.
+
+    \subsection{Komunikace v e-puck knihovně}
+    \label{comm-epuck}
 
     V této práci je uživateli knihovny dána možnost vybrat si mezi komunikací
     synchronní a asynchronní. Synchronní komunikace je určena pro rychlé
@@ -321,7 +338,39 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     senzorů) a zároveň je odlišit od situace, kdy robot neodpověděl včas a tak
     byla zpráva znovu poslána (bylo totiž předpokládáno, že zprávu nedostal).
 
-    \section{Existující řešení}
+    \section{Existující práce}
+
+        \subsection{Webots}
+
+        Webots\cite{webots} je vývojové prostředí a simulátor pro programování robotů.
+        Nabízí podporu nejen pro e-puck robota a umožňuje robota programovat v
+        několika jazycích (C++, Java, Python).
+
+        Napsané programy je možné spouštět a testovat v simulátoru. To je
+        samozřejmě velmi výhodné, pro testování chyb v programu. Ovšem výsledek
+        v simulátoru se může od skutečného chování robota velmi lišit. Při
+        psaní programů je nutné myslet na to, že sensory v robotovi jsou
+        nespolehlivé, jejich hodnoty bývají zašuměné a tak se na ně nedá
+        stoprocentně spolehnout. Webots simulátor se snaží virtuální sensory
+        přiblížit realitě a tak i hodnoty, které obdrží robot v simulátoru
+        neodpovídají přesně simulované realitě.
+
+        Výhodou Webots je tedy kvalitní simulátor, pokud se ovšem podíváme na
+        ovládání skutečného robota, tak tady se od mé práce v mnohém neliší.
+        Webots umožňuje dva způsoby jak řídit skutečného robota, prvním je
+        kompilace programu a nahrání do robota. Ta funguje pouze pokud je
+        program napsán v jazyku C.
+
+        Druhé, zajímavější, řešení je použít vzdálené ovládání pomocí
+        bluetooth. Zde už mohou být programy napsány v libovolném podporovaném
+        jazyce. Do robota je třeba nahrát upravený firmware. Zde ovšem nemohu
+        porovnávat, protože Webots šíří firmware pouze v binární podobě, nejsou
+        dostupné zdrojové kódy a v dokumentaci jsem nenašel přesnější
+        informace, ale všechny funkce jsou volány synchronně.
+
+        Tím se dostáváme k hlavní nevýhodě Webots. Jedná se o komerční projekt,
+        dostupná zdarma je pouze testovací časově omezená verze a nejsou
+        dostupné zdrojové kódy (právě např. firmware).
 
         \subsection{Cyberbotics' Robot Curriculum}
 
@@ -620,16 +669,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 %%% Literatura se řadí abecedně. Úvádí se pouze literatura, na kterou se v textu odkazuje.
 %%% Při odkazu na knihu se vždy uvádějí čísla stránek.
 
-\begin{thebibliography}{99}
-\addcontentsline{toc}{chapter}{Literatura}
-%\bibitem{cyberbotics}Michel O., Rohrer F., Heiniger N.: {\em Cyberbotics' Robot Curriculum} [online]. 2010-08-18 [cit. 2010-12-18]. Dostupné z WWW: \url{http://en.wikibooks.org/wiki/Cyberbotics'_Robot_Curriculum}.
- \bibitem{bonani}Mondada F., Bonani M., Raemy X., Pugh J., Cianci C.,
- Klaptocz A., Magnenat S., Zufferey J.-C., Floreano D., Martinoli A.: {\em The
-     e-puck a Robot Designed for Education in Engineering}, Proceedings of the
-     9th Conference on Autonomous Robot Systems and Competitions, 1(1) (2009) 59--65.
-%\bibitem{abraham-marsden}Abraham R., Marsden J. E.: {\em Foundations of Mechanics}, Addison-Wesley, Reading, 1985.
-%\bibitem{derbes}Derbes D.: {\em Reinventing the wheel: Hodographic solutions to the Kepler problems}, Am. J. Phys. {\bf 69} (2001) 481--489.
-%\bibitem{kvasnica}Kvasnica J.: {\em Teorie elektromagnetického pole}, Academia, Praha, 1985.
-\end{thebibliography}
+\bibliographystyle{czechiso}
+\bibliography{literatura}
 
 \end{document}
