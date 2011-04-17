@@ -340,7 +340,19 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
     \section{Existující práce}
 
+        Existuje mnoho prací, které se zabývají ovládáním robota. V sekci
+        \ref{webots} bude ukázán komerční simulátor Webots. K němu vznikla také
+        kniha Cyberbotics' Robot Curriculum (sekce \ref{curriculum}). Další
+        kniha, která se zabývá robotikou a programovacím jazykem Python je
+        Learning Computing With Robots (sekce \ref{learning-computing}). U
+        Webots nekončí seznam existujících simulátorů, Evorobot* (sekce
+        \ref{evorobot*}) je úzce zaměřený na evoluci a využívá k tomu e-puck
+        robota. A nakonec nesmíme zapomenout na projekt Pyro (sekce
+        \ref{pyro}), který slouží pro psaní vysokoúrovňových programů pro
+        ovládání robota v pythonu a obsahuje dokonce několik simulátorů.
+
         \subsection{Webots}
+        \label{webots}
 
         Webots\cite{webots} je vývojové prostředí a simulátor pro programování robotů.
         Nabízí podporu nejen pro e-puck robota a umožňuje robota programovat v
@@ -373,6 +385,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         dostupné zdrojové kódy (právě např. firmware).
 
         \subsection{Cyberbotics' Robot Curriculum}
+        \label{curriculum}
 
         Pokud jsme se bavili o Webots, tak stojí za zmínku také kniha
         Cyberbotics' Robot Curriculum\cite{cyberbotics}. Autorem je Olivier
@@ -397,6 +410,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         být zdrojem zajímavých a podnětných příkladů a experimentů.
 
         \subsection{Learning Computing With Robots}
+        \label{learning-computing}
 
         Jedná se o další knihu, která se vztahuje k programování robotů.
         Learning Computing With Robots\cite{learning} ovšem není psána o e-puck
@@ -408,14 +422,87 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         aby mohli dále pokračovat v programování ve výuce programování robotů.
 
         \subsection{Evorobot*}
+        \label{evorobot*}
 
-        \subsection{\ldots}
+        Evorobot* je software vyvinutý pro provádění experimentů na evoluci
+        kolektivního chování a komunikace, založen na e-puck robotovi. Skládá
+        se z několika částí:
 
-    \section{Odlišnosti tohoto řešení}
+        \begin{itemize}
+            \item Evoluční algoritmus
+            \item Simulátor neuronové sítě
+            \item Simulátor robota a prostředí
+            \item Grafické rozhraní a příkazy pro analýzu experimentů
+            \item Nástroje pro testování a vyvíjení robota
+            \item Evorobot* firmware pro nahrání do robota a následné ovládání pomocí programu z PC
+        \end{itemize}
+
+        Evorobot* tedy slouží k vytváření neuronové sítě pro ovládání robota,
+        její vyvíjení v simulovaném prostředí a následnou adaptaci a testování
+        na skutečném hardware. Společně s programem se dodávají ukázkové
+        experimenty, které vycházejí z knihy Evolutionary
+        Robotics\cite{evolutionary} od stejných autorů.
+
+        \subsection{Pyro}
+        \label{pyro}
+
+        Pyro je zkratka pro Python Robotics, jedná se o projekt jehož cílem je
+        vytvořit prostředí pro zkoumání pokročilých témat z umělé inteligence a
+        robotiky bez starostí o nízkoúrovňové problémy hardware.
+
+        Pyro je napsán v pythonu, skládá se z několika částí. Simulátor který
+        funguje jako server a zpracovává celý experiment. Na výběr je několik
+        simulátorů, od jednoduchého 2D, přes 3D prostředí se simulací fyziky,
+        až po simulaci soutěže RoboCup. Simulátory mohou být také diskrétní, je
+        tedy možné simulovat i problémy zapadající spíše do umělé inteligence.
+        Pyro například obsahuje simulaci světa Wumpus\cite{aima}.
+
+        Další součástí je simulace robota, pyro podporuje několik
+        rodin robotů:
+
+        \begin{itemize}
+            \item Pioneer -- Pioneer, Pioneer2, PeopleBot robots
+            \item Khepera -- Khepera, Khepera 2 a Hemisson robots
+            \item AIBO
+            \item Roomba
+        \end{itemize}
+
+        Nakonec nejdůležitější součástí je samotný mozek robota, jedná se o
+        program napsaný v pythonu, který robota řídí. Zde je upřednostněna
+        velká míra abstrakce tak, aby stejný program mohl být testován na více
+        robotech. Pyro samozřejmě obsahuje moduly pro různé přístupy k ovládání
+        robota (konečné automaty, neuronové sítě, posilované učení, fuzzy
+        logika, evoluční algoritmy,~\ldots).
+
+    \section{Odlišnosti e-puck knihovny od ostatních řešení}
+
+    Účelem této práce je být výukovým materiálem, tedy je občas kladen důraz na
+    vlastnosti, které by v jiné situaci byly opomíjeny.
+
+    První důležitou vlastností je otevřenost zdrojových kódů. Uživatel je
+    povzbuzován, aby do nich nahlédl. Jsou důkladně okomentovány a měly by
+    čtenářům ukázat příklad, jak může komunikace s robotem probíhat. Stejně tak
+    příklady jsou určeny pro předvedení možných způsobů ovládání robota.
+
+    Uživatel si může vybrat zda-li má být komunikace synchronní nebo
+    asynchronní. Synchronní komunikace slouží k experimentování s robotem, ve
+    spojení s pythonem se jedná o velmi jednoduchý a rychlý způsob jak robotovi
+    předávat příkazy. Jedná se o jednu z výhod e-puck knihovny.
+
+    V případě psaní složitějších programů ovšem e-puck knihovna nezůstává v
+    ničem pozadu za konkurencí. Nabízí spolehlivou asynchronní komunikaci, díky
+    které se může uživatel spolehnout, že příkazy posílané robotovi budou
+    opravdu provedeny.
+
+    Další výhodou, kterou e-puck knihovna má oproti ostatním knihovnám pro
+    ovládání e-puck robota, je upravený firmware. Právě díky němu je možné
+    zajistit spolehlivou komunikaci. A také byly přidány některé příkazy.
+    Bližší popis provedených úprav je v sekci \ref{btcom}.
 
 \chapter{Implementace}
 
     \section{BTcom firmware}
+    \label{btcom}
 
     Robot e-puck v sobě obsahuje programovatelný mikroprocesor. Většina ze
     stávajících řešení se zaměřuje na psaní programu právě pro tento
