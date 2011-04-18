@@ -359,10 +359,10 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         několika jazycích (C++, Java, Python).
 
         Napsané programy je možné spouštět a testovat v simulátoru. To je
-        samozřejmě velmi výhodné, pro testování chyb v programu. Ovšem výsledek
-        v simulátoru se může od skutečného chování robota velmi lišit. Při
-        psaní programů je nutné myslet na to, že sensory v robotovi jsou
-        nespolehlivé, jejich hodnoty bývají zašuměné a tak se na ně nedá
+        samozřejmě velmi výhodné pro rychlé ladění programu. Ovšem výsledek v
+        simulátoru se může od skutečného chování robota velmi lišit. Při psaní
+        programů je nutné myslet na to, že sensory v robotovi jsou
+        nespolehlivé, jejich hodnoty bývají zatíženy chybou a tak se na ně nedá
         stoprocentně spolehnout. Webots simulátor se snaží virtuální sensory
         přiblížit realitě a tak i hodnoty, které obdrží robot v simulátoru
         neodpovídají přesně simulované realitě.
@@ -373,12 +373,12 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         kompilace programu a nahrání do robota. Ta funguje pouze pokud je
         program napsán v jazyku C.
 
-        Druhé, zajímavější, řešení je použít vzdálené ovládání pomocí
+        Druhé zajímavější řešení je použít vzdálené ovládání pomocí
         bluetooth. Zde už mohou být programy napsány v libovolném podporovaném
         jazyce. Do robota je třeba nahrát upravený firmware. Zde ovšem nemohu
         porovnávat, protože Webots šíří firmware pouze v binární podobě, nejsou
-        dostupné zdrojové kódy a v dokumentaci jsem nenašel přesnější
-        informace, ale všechny funkce jsou volány synchronně.
+        dostupné zdrojové kódy a v dokumentaci není k nalezení přesnější
+        informace. Všechny funkce jsou ovšem volány synchronně.
 
         Tím se dostáváme k hlavní nevýhodě Webots. Jedná se o komerční projekt,
         dostupná zdarma je pouze testovací časově omezená verze a nejsou
@@ -397,7 +397,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
         Kniha pro výuku programování robota používá e-puck robota a simulátor
         Webots. Vysvětluje principy, které se při programování robotů
-        používají. Postupuje od jednoduchý příkladů jako je pohyb s robotem,
+        používají. Postupuje od jednoduchých příkladů jako je pohyb s robotem,
         vyhýbání se překážkám, následování čáry, přes využití všech senzorů
         robota (akcelerometr, kamera) až ke složitějším technikám.
 
@@ -419,7 +419,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
         ukázku zajímavých příkladů.
 
         Kniha se tedy dá chápat jako úvod pro ty, kdo se chtějí naučit Python,
-        aby mohli dále pokračovat v programování ve výuce programování robotů.
+        aby mohli dále pokračovat ve výuce programování robotů.
 
         \subsection{Evorobot*}
         \label{evorobot*}
@@ -482,7 +482,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     První důležitou vlastností je otevřenost zdrojových kódů. Uživatel je
     povzbuzován, aby do nich nahlédl. Jsou důkladně okomentovány a měly by
     čtenářům ukázat příklad, jak může komunikace s robotem probíhat. Stejně tak
-    příklady jsou určeny pro předvedení možných způsobů ovládání robota.
+    ukázkové kontrolní programy jsou určeny pro předvedení možných způsobů
+    ovládání robota.
 
     Uživatel si může vybrat zda-li má být komunikace synchronní nebo
     asynchronní. Synchronní komunikace slouží k experimentování s robotem, ve
@@ -503,12 +504,12 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
     Hlavní součástí této práce je samozřejmě samotná implementace knihovny.
     Důležitou změnou je úprava firmware robota. V sekci \ref{btcom} je
-    představen firmware BTcom, který je používán pro ovládání robota a jsou zde
+    představen firmware BTcom, který je používán pro ovládání robota. Jsou zde
     také uvedeny změny, které bylo nutné provést pro zabezpečení spolehlivé
     asynchronní komunikace.
 
     Samotná implementace asynchronní komunikace je představena v sekci
-    \ref{async-impl}. Jsou zde představeny mechanismy, díky kterým je možné
+    \ref{async-impl}. Jedná se o představení mechanismů, díky kterým je možné
     provádět komunikaci asynchronně. K asynchronní komunikaci také patří
     zpracování odpovědi a vyhodnocování ztracených příkazů.
 
