@@ -501,6 +501,23 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
 \chapter{Implementace}
 
+    Hlavní součástí této práce je samozřejmě samotná implementace knihovny.
+    Důležitou změnou je úprava firmware robota. V sekci \ref{btcom} je
+    představen firmware BTcom, který je používán pro ovládání robota a jsou zde
+    také uvedeny změny, které bylo nutné provést pro zabezpečení spolehlivé
+    asynchronní komunikace.
+
+    Samotná implementace asynchronní komunikace je představena v sekci
+    \ref{async-impl}. Jsou zde představeny mechanismy, díky kterým je možné
+    provádět komunikaci asynchronně. K asynchronní komunikaci také patří
+    zpracování odpovědi a vyhodnocování ztracených příkazů.
+
+    Nakonec je představena pro uživatele ta nejzajímavější část a to rozhraní
+    pro komunikaci s robotem (sekce \ref{controller}). Jedná se o most mezi
+    uživatelem a třídami, které se starají o komunikaci. Dochází zde k převodu
+    příkazů do srozumitelné formy pro robota a naopak také k převádění odpovědí
+    od robota do čitelného formátu pro uživatele.
+
     \section{BTcom firmware}
     \label{btcom}
 
@@ -602,6 +619,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     vizuální upozornění, že je třeba baterii vyměnit.
 
     \section{Asynchronní komunikace}
+    \label{async-impl}
 
     Knihovna umožňuje synchronní i asynchronní komunikaci. Synchronní
     komunikace je dostatečně jednoduchá, tudíž nepotřebuje dlouhé vysvětlování,
@@ -683,6 +701,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     ztracený a poslán znova.
 
     \section{Ovládání robota}
+    \label{controller}
 
     Pokud je zajištěna komunikace s robotem, tak samotné jeho ovládání už je
     velmi jednoduché. Při vytváření ovladače robota musí uživatel specifikovat,
