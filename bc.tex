@@ -1,3 +1,4 @@
+%{{{ Nastaveni
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                                    %%%
 %%% Šablona bakalářské práce na MFF UK %%%
@@ -35,8 +36,9 @@
 
 %\date{}
 
+%}}}
 \begin{document}
-
+%{{{ Titulka a dalsi stranky pred textem
 %\csprimeson % zapne jednoduché psaní českých uvozovek pomocí klasických znaků, ale potom pozor
              % na originální apostrofy, které budou chybně interpretovány!!!
 
@@ -138,16 +140,15 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
 \newpage
 
-%%% Následuje text bakalářské práce členěný do kapitol, které se číslují, označí názvy a graficky oddělí.
-%%% Nedoporučuje se používat víc než dvě úrovně číslování kapitol, viz příklad níže.
-
-\chapter{Úvod}
+%}}}
+\chapter{Úvod} %{{{
 
     \section{Záměr práce}
 
     \section{Přehled kapitol}
 
-\chapter{Teorie}
+%}}}
+\chapter{Teorie} %{{{
 
     V této části bych rád uvedl všechny základní součásti, na kterých má práce
     stojí a také bych se rád zmínil o způsobech jak se řeší ovládání robota
@@ -523,14 +524,14 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     nutné, aby s ní spolupracoval firmware v robotovi.
 
     \subsection{Firmware}
-    
+
     Původní BTcom firmware funguje velmi přímočaře, jedná se o jednu nekonečnou
     smyčku, ve které načítá příkazy, zavolá příslušné funkce a odešle odpověď.
     Díky tomu, že je program takto prostý, je jednoduché provozovat synchronní
     komunikaci. Program načítá příkazy přesně tak, jak mu přijdou, jeden po
     druhém. Na každý odpoví a teprve pak se přesune na zpracování dalšího
-    příkazu. 
-    
+    příkazu.
+
     Problém ovšem nastane pokud dojde k poruše spojení a nějaký příkaz
     nedorazí. Původní firmware nedokázal problémy tohoto typu rozpoznat. Navíc
     pokud robot pracuje v binárním režimu, tak posílá pouze data, bez
@@ -542,7 +543,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     komunikace. V kapitole \ref{btcom:prikazy} je popsáno jak bylo potřeba
     upravit příkazy, aby se daly svázat s patřičnou odpovědí. K příkazům např.
     přibylo pořadové číslo.
-    
+
     V části \ref{btcom:upravy} jsou popsány další změny firmware. Binární
     příkazy v odpovědi posílají celou hlavičku obsahující kód příkazu, pořadové
     číslo a velikost přenášených dat. Dále firmware získal možnost upozornit na
@@ -552,7 +553,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     robotem je velmi problémová a složitější příkazy už stejně není schopen
     vykonat.
 
-\chapter{Implementace}
+%}}}
+\chapter{Implementace} %{{{
 \label{Implementace}
 
     Hlavní součástí této práce je samozřejmě samotná implementace knihovny.
@@ -690,7 +692,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     Příchozí komunikace je získávána pomocí sériového připojení vytvořeného
     knihovnou pySerial. Připojení podporuje standardní metody pro práci se
     sockety a je tedy možné používat funkci select operačního systému, která
-    dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z
+    dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z%{{{%}}}
     nich. První připojení, které je kontrolováno tedy je sériové připojení s
     robotem. Další spojení slouží k získávání nových příkazů.
 
@@ -762,7 +764,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     převést fotku z formátu, který používá robot, do formátu standardní
     knihovny Pythonu.
 
-\chapter{Uživatelská dokumentace}
+%}}}
+\chapter{Uživatelská dokumentace} %{{{
 
     \section{Připojení robota}
 
@@ -836,16 +839,18 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 
     \section{Přehled příkazů}
 
-\chapter{Příklady kontrolních programů}
+%}}}
+\chapter{Příklady kontrolních programů} %{{{
 
-\chapter{Závěr}
+%}}}
+\chapter{Závěr} %{{{
 
     \section{Zhodnocení práce}
 
     \section{Benchmark knihovny}
 
-
-%%% Seznam literatury
+%}}}
+%{{{ Seznam literatury
 %%%
 %%% Literatura se řadí abecedně. Úvádí se pouze literatura, na kterou se v textu odkazuje.
 %%% Při odkazu na knihu se vždy uvádějí čísla stránek.
@@ -853,4 +858,5 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 \bibliographystyle{czechiso}
 \bibliography{literatura}
 
+%}}}
 \end{document}
