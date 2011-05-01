@@ -26,8 +26,13 @@
 \usepackage{hyperref}
 \usepackage{epstopdf}
 \usepackage{url}
+\usepackage{minted}
 
 \usepackage[left=4cm]{geometry} % nastavení dané velikosti okrajů
+
+\renewcommand\listingscaption{Zdrojový kód}
+\newminted[pyc]{python}{linenos=true, frame=lines}
+
 
 %\newindex{default}{idx}{ind}{Rejstřík} % zavádí rejstřík v případě použití balíku index
 
@@ -660,15 +665,57 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     přerušení jsou zapnuty všechny LED na obvodu robota a tak uživatel dostane
     vizuální upozornění, že je třeba baterii vyměnit.
 
+    \section{Synchronní komunikace}
+
+    Hlavním cílem synchronní komunikace je umožnit uživateli knihovny
+    jednoduché zasílání příkazů, u kterého není kladen důraz na ošetření
+    výjimek. Počítá se s tím, že uživatel bude využívat synchronní komunikaci
+    pro experimentování s robotem a prototypování příkazů.
+
+    Hlavní výhodou synchronní komunikace je její jednoduchost. Jak lze vidět
+    ve zdrojovém kódu \ref{lst:sync_example}, příkaz lze předat robotovi
+    zavoláním pouze jedné metody, která navíc i vrátí odpověď od robota. V
+    tomto případě se jedná o rychlost motorů. Díky tomu lze robota ovládat i z
+    interpretu Pythonu, čímž se výrazně zkrátí doba potřebná pro testování
+    nových nápadů. Tam kde je normálně potřeba napsat zdrojový kód, zkompilovat
+    aplikaci a následně ji pustit, tady stačí pouze pustit Python, importovat
+    knihovnu, vytvořit spojení (což jsou 2 řádky kódu) a pak už nám nic nebrání
+    v posílání příkazů.
+
+    Každé zavolání příkazu odešle robotovi zprávu (bližší popis zprávy v části
+    \ref{btcom:prikazy}) a následně zablokuje (zavoláním metody {\tt read} na
+    sériové spojení) další vykonávání příkazů, dokud neobdrží odpověď.
+
+    \begin{listing}[h]
+    \begin{pyc}
+>>> from epuck import Controller
+>>> controller = Controller('/dev/rfcomm0')
+>>> controller.get_speed()
+(0,0)
+    \end{pyc}
+    \caption{Příklad synchronní komunikace}
+    \label{lst:sync_example}
+    \end{listing}
+
     \section{Asynchronní komunikace}
     \label{async-impl}
 
-    Knihovna umožňuje synchronní i asynchronní komunikaci. Synchronní
-    komunikace je dostatečně jednoduchá, tudíž nepotřebuje dlouhé vysvětlování,
-    opravdu se děje přesně to, co uživatel očekává. To je také jejím účelem.
-    Oproti tomu asynchronní komunikace se snaží co nejvíce usnadnit ovládání
-    robota, skrýt některé složitější mechanismy komunikace před uživatelem, a
-    proto si zaslouží důkladné představení.
+    Asynchronní komunikace se snaží co nejvíce usnadnit ovládání robota, skrýt
+    některé složitější mechanismy komunikace před uživatelem a přitom zajistit
+    spolehlivou komunikaci. Krátká ukázka asynchronní komunikace je ve
+    zdrojovém kódu \ref{lst:async_example}.
+
+    \begin{listing}[h]
+    \begin{pyc}
+>>> from epuck import Controller
+>>> controller = Controller('/dev/rfcomm0', asynchronous=True)
+>>> request = controller.get_speed()
+>>> request.get_response()
+(0,0)
+    \end{pyc}
+    \caption{Příklad asynchronní komunikace}
+    \label{lst:async_example}
+    \end{listing}
 
     Základním požadavkem asynchronní komunikace je oddělení zavolání příkazu od
     jeho provedení. Provedení totiž může trvat delší dobu a to se může ukázat v
@@ -676,7 +723,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     odpověď, ovšem jak se pak uživatel dostane k odpovědi? Zavolání příkazu
     nemůže vrátit odpověď, ale na druhou stranu může vrátit uživateli odkaz na
     potenciální odpověď. Toho se pak může dotázat, zda-li odpověď přišla a
-    nakonec ji také i získat. Pro vysvětlení jak tento odkaz funguje bude
+    nakonec ji také i získat. Ukázka je ve zdrojovém kódu
+    \ref{lst:async_example}. Pro vysvětlení jak tento odkaz funguje bude
     potřeba osvětlit vnitřnosti asynchronní komunikace.
 
     Asynchronní komunikace už od připojení robota probíhá v samostatném vláknu,
@@ -692,8 +740,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     Příchozí komunikace je získávána pomocí sériového připojení vytvořeného
     knihovnou pySerial. Připojení podporuje standardní metody pro práci se
     sockety a je tedy možné používat funkci select operačního systému, která
-    dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z%{{{%}}}
-    nich. První připojení, které je kontrolováno tedy je sériové připojení s
+    dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z
+    nich. První připojení, které je kontrolováno, tedy je sériové připojení s
     robotem. Další spojení slouží k získávání nových příkazů.
 
     \subsection{Odeslání příkazu}
@@ -710,6 +758,22 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     asynchronní vlákno je pak následovně informováno o novém příkazu, nakonec
     je vytvořen odkaz na příkaz, který je vrácen uživateli. Žádný z těchto
     příkazů není blokující, tedy odeslání příkazu nestojí uživatele téměř nic.
+
+    \begin{listing}[H]
+    \begin{pyc}
+# Zaslani prikazu
+request = controller.get_speed()
+# Kontrola, zda-li uz prisla odpoved
+while not request.response_received():
+    # Program zde muze delat cokoli jineho,
+    # zatimco ceka na odpoved
+# Ziskani odpovedi
+value = request.get_response()
+
+
+    \end{pyc}
+    \caption{Ukázka oddělení zaslání příkazu a vyzvednutí odpovědi}
+    \end{listing}
 
     Zbytek odeslání příkazu už probíhá v asynchronním vláknu. Funkce select je
     přerušena informací o novém příkazu. Následně je příkaz odebrán z fronty,
@@ -768,22 +832,29 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
 \chapter{Uživatelská dokumentace} %{{{
 
     \section{Připojení robota}
+    \label{pripojeni_robota}
+
+    Pro využívání knihovny je nutné mít robota připojeného k PC. Robot se chová
+    jako standardní Bluetooth zařízení. Poskytuje pouze jedinou službu a to
+    sériovou komunikaci. Je tedy potřeba nakonfigurovat sériový port, přes
+    který bude knihovna s robotem komunikovat.
 
     \subsection{Příprava}
 
     E-puck robot s počítačem komunikuje pomocí Bluetooth. Pro připojení robota
-    k počítači na operačním systému Linux je třeba mít nainstalovánu podporu
-    pro Bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
+    k počítači na operačním systému Linux je tedy třeba mít nainstalovánu
+    podporu pro Bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
     bluez-utils}, dále je potřeba mít software pro správu pin ({\tt bluez-pin,
-    bluez-gnome, bluetooth-applet, \ldots}).
+    bluez-gnome a bluetooth-applet, \ldots}).
 
     Nejprve je potřeba zjistit adresu robota. Lze využít utilitu {\tt hcitool}:
 
-    \begin{verbatim}
+    \begin{verbatim}                .
     $ hcitool scan
     \end{verbatim}
 
-    Adresa robota se použije při nastavení virtuálního sériového portu v souboru {\tt /etc/bluetooth/rfcomm.conf}:
+    Adresa robota se použije při nastavení virtuálního sériového portu v
+    souboru {\tt /etc/bluetooth/rfcomm.conf}:
 
     \begin{verbatim}
     rfcomm0 {
@@ -794,50 +865,163 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     }
     \end{verbatim}
 
+    Tím jsme nakonfigurovali zařízení {\tt /dev/rfcomm0}.
+
     \subsection{Přípojení}
-    Následuje již jen vlastní připojení, při kterém se systém může zeptat na
-    pin robota. Ten je napsán na robotovi (čtyřmístné číslo na horní straně
-    robota).
+
+    Zařízení reprezentující spojení s robotem jsme nakonfigurovali, nyní zbývá
+    připojit robota:
 
     \begin{verbatim}
-    $ rfcomm bind rfcomm0
     $ rfcomm connect rfcomm0
     \end{verbatim}
 
     Po těchto příkazech by už mělo být vytvořené spojení s robotem a je možné
-    mu začít posílat příkazy pomocí knihovny.
+    mu začít posílat příkazy pomocí knihovny. V průběhu připojení se systém
+    může dotázat na PIN, který je potřeba pro spárování zařízení pomocí
+    Bluetooth.
 
     \subsection{Přehled možných chyb}
-    Při připojení mohly nastat chyby, nejčastější jsou tyto:
+    Při připojení se můžou vyskytnou chyby, nejčastější jsou tyto:
     \begin{itemize}
-    \item{{\em Can't connect RFCOMM socket: Connection refused} -- Nejspíše neběží žádná aplikace, která by se na heslo zeptala. Je třeba spustit např. bluetooth-applet.}
-    \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná příčína je už připojené zařízení. Buď už běží rfcomm, anebo si
-        někdo robota přivlastnil. Pro nový pokus o připojení stačí:
-            \begin{verbatim}
+    \item{{\em Can't connect RFCOMM socket: Connection refused} -- Nejspíše
+        neběží žádná aplikace, která by se na heslo zeptala. Je třeba spustit
+        např. {\tt bluetooth-applet}.}
+    \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná
+        příčína je už připojené zařízení. Buď už běží {\tt rfcomm}, anebo jiná
+        aplikace, která s robotem udržuje komunikaci. Řešením je zavřít
+        aplikace komunikující s robotem, popř. zkusit následující příkazy:
+    \begin{verbatim}
     $ rfcomm release rfcomm0
     $ rfcomm connect rfcomm0
-            \end{verbatim}
+    \end{verbatim}
     }
     \end{itemize}
 
-    \subsection{Vytvoření připojení v Pythonu}
+    \section{Ukázkový program}
 
-    Pro ovládání robota slouží modul {\tt epuck.controller} a objekt {\tt Controller}. Vytvoření připojení je velmi jednoduché:
-    \begin{verbatim}
-    from epuck.controller import Controller
+    Pro ovládání robota slouží modul {\tt epuck} a objekt {\tt Controller}.
+    Ovládání robota je velmi jednoduché. Ukážeme si program pro pohyb robota
+    dopředu, dokud nenarazí na překážku a na něm rozebereme jednotlivé příkazy:
 
-    controller = Controller("/dev/rfcomm0")
-    \end{verbatim}
-    První parametr určuje cestu k vytvořenému portu (zde {\tt /dev/rfcomm0}).
-    Je možné také určit, zda-li má komunikace probíhat synchronně (v základu),
-    anebo asynchronně. Pak je potřeba zadat ještě argument: {\tt
-    asynchronous=True}.
+    %\begin{listing}[H]
+        \begin{pyc}
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-    Další komunikace s robotem pak probíhá přes instanci {\tt controller}.
+"""Go forward, stop in front of an obstacle."""
 
-    \section{Posílání příkazů}
+import time
 
-    \section{Přehled příkazů}
+from epuck import Controller
+
+# Input larger than the threshold means there is an obstacle.
+threshold = 300
+
+# Create the controller. Robot is connected to /dev/rfcomm2
+# and the communication will be asynchronous.
+controller = Controller('/dev/rfcomm2', asynchronous=True)
+
+# Set the speed of left and right wheel to 100.
+controller.set_speed(100, 100)
+
+# Ask for the values of proximity sensors
+sensor_request = controller.get_proximity_sensors()
+# Wait until the robot returns them.
+sensor_values = sensor_request.get_response()
+
+# Continue while there is nothing in front of the front left
+# and front right sensor.
+while (sensor_values['L10'] < threshold) \
+       and (sensor_values['R10'] < threshold):
+    # Wait for a while
+    time.sleep(0.1)
+    # Read new values
+    sensor_request = controller.get_proximity_sensors()
+    sensor_values = sensor_request.get_response()
+
+# Stop the robot
+controller.set_speed(0, 0)
+        \end{pyc}
+    %\caption{Jednoduchý asynchronní program pro ovládání robota}
+    %\label{lst:simple_example}
+    %\end{listing}
+
+    Tento kód tvoří celý program pro ovládání robota. První věcí, kterou je
+    třeba vždy učinit, je import knihovny:
+
+    \begin{pyc*}{firstnumber=8, frame=none}
+from epuck import Controller
+    \end{pyc*}
+
+    Nyní máme importovanou třídu {\tt Controller}, která slouží ke komunikaci s
+    robotem. Stačí už jen vytvořit samotné spojení:
+
+    \begin{pyc*}{firstnumber=15, frame=none}
+controller = Controller('/dev/rfcomm2', asynchronous=True)
+    \end{pyc*}
+
+    Vytvoření spojení je jednoduché, první parametr je cesta k připojenému
+    robotovi (jak připojit robota je popsáno v kapitole
+    \ref{pripojeni_robota}). Druhý parametr je nepovinný a určuje, zda-li má
+    komunikace probíhat asynchronně. V tomto případě chceme asynchronní
+    komunikaci, pokud bychom druhý parametr vynechali, tak by komunikace byla
+    synchronní.
+
+    Nyní už můžeme zadávat příkazy:
+
+    \begin{pyc*}{firstnumber=18, frame=none}
+controller.set_speed(100, 100)
+    \end{pyc*}
+
+    Zde nastavíme rychlost robota na 100 tiků za sekundu. V tomto případě nám
+    stačí pouze vykonat příkaz a nepotřebujeme získat odpověď od robota. V
+    případě změny rychlosti robot pouze pošle potvrzení, protože používáme
+    asynchronní komunikaci, toto potvrzení bude zpracováno automaticky.
+
+    Pokud ovšem chceme i odpověď, tak se příkaz skládá ze dvou kroků:
+
+    \begin{pyc*}{firstnumber=20, frame=none}
+# Ask for the values of proximity sensors
+sensor_request = controller.get_proximity_sensors()
+# Wait until the robot returns them.
+sensor_values = sensor_request.get_response()
+    \end{pyc*}
+
+    Nejprve pošleme příkaz a uložíme si návratovou hodnotu. Ta reprezentuje
+    odpověď, která přijde na zaslaný příkaz. Druhým krokem pak je získání této
+    odpovědi.
+
+    Když už jsme získali nějaké data od robota, tak je můžeme zpracovat (v
+    tomto případě to jsou hodnoty z IR senzorů):
+
+    \begin{pyc*}{firstnumber=27, frame=none}
+while (sensor_values['L10'] < threshold) \
+       and (sensor_values['R10'] < threshold):
+    \end{pyc*}
+
+    Kontrolujeme zde, zda-li  před robotem nic není. Bižší popis je v
+    dokumentaci metod. V případě, že před robotem nic není můžeme program na
+    chvíli uspat, zatím se robot posune o kus dál a my můžeme znova
+    zkontrolovat senzory:
+
+    \begin{pyc*}{firstnumber=29, frame=none}
+    # Wait for a while
+    time.sleep(0.1)
+    # Read new values
+    sensor_request = controller.get_proximity_sensors()
+    sensor_values = sensor_request.get_response()
+    \end{pyc*}
+
+    Vzhledem k tomu, že kontrola probíhá v nekonečné smyčce tak krátká pauza
+    slouží k nevytěžování procesoru PC na 100\%.
+
+    Pokud narazí robot na překážku, tak jediné, co mu zbývá před zastavením, je
+    zastavit motory:
+
+    \begin{pyc*}{firstnumber=36, frame=none}
+    controller.set_speed(0, 0)
+    \end{pyc*}
 
 %}}}
 \chapter{Příklady kontrolních programů} %{{{
