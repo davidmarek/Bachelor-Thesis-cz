@@ -33,6 +33,16 @@
 \renewcommand\listingscaption{Zdrojový kód}
 \newminted[pyc]{python}{linenos=true, frame=lines}
 
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\method}[1]{\vskip.5cm \texttt{\small #1}}
+
+\newenvironment{popis}%
+{\begin{list}{}%
+         {\setlength{\leftmargin}{0.5cm}\setlength{\topsep}{1pt}
+          \setlength{\itemsep}{0.1cm} \setlength{\parsep}{0.2cm}}%
+         \item[]%
+}
+{\end{list}}
 
 %\newindex{default}{idx}{ind}{Rejstřík} % zavádí rejstřík v případě použití balíku index
 
@@ -769,8 +779,6 @@ while not request.response_received():
     # zatimco ceka na odpoved
 # Ziskani odpovedi
 value = request.get_response()
-
-
     \end{pyc}
     \caption{Ukázka oddělení zaslání příkazu a vyzvednutí odpovědi}
     \end{listing}
@@ -1033,6 +1041,204 @@ while (sensor_values['L10'] < threshold) \
 
     \section{Benchmark knihovny}
 
+%}}}
+\appendix
+
+\chapter{Dokumentace API}%{{{
+
+\section{Třída {\tt epuck.{\bf Controller} }}
+class \code{epuck.{\bf Controller}(port[, asynchronous=False[, timeout=0.5[,\\
+        max\_tries=10]]])}
+    \begin{popis}
+    Ovládání e-puck robota přes Bluetooth z počítače.
+
+    Při vytváření objektu je možné rozhodnout, zda-li má komunikace probíhat
+    synchronně, anebo asynchronně. Tato volba ovlivňuje zda-li se pro
+    komunikaci použije třída \code{SyncComm} anebo \code{AsyncComm}. Také na této
+    volbě závisí co budou jednotlivé příkazy vracet. V případě synchronní
+    komunikace půjde rovnou o odpověď. V případě asynchronní komunikace vrátí
+    \code{RequestHandler}. Z něj se stejné informace dají získat pomocí metody
+    \code{get\_response()} (další podrobnosti v dokumentaci třídy
+    \code{RequestHandler}).
+
+    {\bf Poznámka: }V této dokumentaci jsou popsány návratové hodnoty tak, jak
+    je vrátí přímo příkaz při synchronní komunikaci, anebo jak budou vráceny
+    metodou \code{get\_response()} třídy \code{RequestHandler} při komunikaci
+    asynchronní.
+
+    {\bf Parametry: }
+    \begin{itemize}
+        \item {\bf port}(string) -- cesta k portu, kde je e-puck připojen
+            (například \code{/dev/rfcomm2})
+        \item {\bf asynchronous} (bool) -- zda-li má být použita asynchronní
+            komunikace.
+        \item {\bf timeout} (float) -- čas v sekundách před dalším pokusem o
+            zaslání příkazu (asynchronní komunikace)
+        \item {\bf max\_tries} (int) -- maximální počet pokusů o zaslání
+            příkazu (asynchronní komunikace)
+    \end{itemize}
+
+    \method{{\bf set\_speed}(left, right)}
+        \begin{popis}
+        Nastavit rychlost levého a pravého krokového motoru. Rychlost je měřena
+        v krocích za sekundu a musí být v rozmezí [-1000, 1000].
+
+        Pokud je rychlost mimo rozsah, tak vyvolá výjimku \code{WrongCommand}.
+        Při asynchronní komunikaci může dojít k vypršení limitu pokusů a pak
+        dojde k vyvolání výjimky \code{CommError}.
+
+        {\bf Parametry: }
+        \begin{itemize}
+            \item {\bf left} (int) -- požadovaná rychlost levého kola
+            \item {\bf right} (int) -- požadovaná rychlost pravého kola
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf get\_speed}()}
+        \begin{popis}
+        Získat rychlost levého a pravého krokového motoru. Rychlost je měřena v
+        krocích za sekundu a je v rozmezí [-1000, 1000].
+
+        {\bf Návratová hodnota: }dvojice obsahující rychlost levého a pravého
+        motoru
+        \end{popis}
+
+    \method{{\bf set\_body\_led}(on)}
+        \begin{popis}
+        Zapnout nebo vypnout zelenou diodu v robotovi.
+
+        {\bf Parametry: }
+        \begin{itemize}
+            \item {\bf on} (bool) -- zapnout nebo vypnout diodu
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf set\_front\_led}(on)}
+        \begin{popis}
+        Zapnout nebo vypnout jasnou červenou diodu v přední části robota (vedle
+        kamery).
+
+        {\bf Parametry: }
+        \begin{itemize}
+            \item {\bf on} (bool) -- zapnout nebo vypnout diodu
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf set\_leds}(on)}
+        \begin{popis}
+        Zapnout nebo vypnout všechny diody, které jsou po obvodu robota, naráz.
+
+        {\bf Parametry: }
+        \begin{itemize}
+            \item {\bf on} (bool) -- zapnout nebo vypnout diody
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf set\_led}(led\_no, on)}
+        \begin{popis}
+        Zapnout nebo vypnout jednu z osmi diod, které jsou po obvodu robota.
+
+        Diody jsou očíslovány 0 až 7, po směru hodinových ručiček, dioda číslo
+        0 je v přední části robot (neplést s jasnější diodou, která je vedle
+        kamery).
+
+        {\bf Parametry: }
+        \begin{itemize}
+            \item {\bf led\_no} (int) -- číslo diody, která má být ovládána
+                (číslo z rozsahu [0, 7])
+            \item {\bf on} (bool) -- zapnout nebo vypnout diodu
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf get\_turning\_switch}()}
+        \begin{popis}
+        Získat pozici otáčivého přepínače.
+
+        Otáčivý přepínač je na horní straně robota, jde o malou černou tyčinku,
+        kterou je možné otočit do jedné z 16 pozic. Pozice jsou očíslovány 0 až
+        15. Přepínač je v pozici 0 pokud šipka ukazuje směrem k černé tečce,
+        která je nakreslená na plošném spoji. Pozice jsou číslovány ve směru
+        hodinových ručiček.
+
+        {\bf Návratová hodnota:} pozice přepínače.
+        \end{popis}
+
+    \method{{\bf get\_proximity\_sensors}()}
+        \begin{popis}
+            Získat data o vzdálenosti překážek z 8 IR senzorů.
+
+            Senzory vrací hodnotu z rozsahu [0, 4095]. Jsou rozmístěny po
+            obvodu robota zrcadlově na pravé i levé straně. Pokud bereme směr
+            pohybu jako úhel 0 stupňů, tak se senzory nachází na 10, 45 a 90
+            stupních a také jsou dva vlevo i vpravo na zadní části robota.
+
+            Metoda vrací vždy hodnoty všech senzorů. Pro přehlednější
+            zpracování jsou uloženy ve slovníku, klíč je vždy znak označující
+            levou (L) nebo pravou (P) stranu a pak uhel v jakém se senzor
+            nachází (senzory vzadu jsou označeny B). Seznam klíčů tedy je: {\tt
+            ['R10', 'R45', 'R90', 'RB', 'LB', 'L90', 'L45', 'L10']}.
+
+            {\bf Návratová hodnota:} hodnoty IR senzorů překážek.
+        \end{popis}
+
+    \method{{\bf get\_ambient\_sensors}()}
+        \begin{popis}
+        Získat data o okolním světle z 8 IR senzorů.
+
+        Senzory vrací hodnotu z rozsahu [0, 4095]. Jsou rozmístěny po obvodu
+        robota zrcadlově na pravé i levé straně. Pokud bereme směr pohybu jako
+        úhel 0 stupňů, tak se senzory nachází na 10, 45 a 90 stupních a také
+        jsou dva vlevo i vpravo na zadní části robota.
+
+        Metoda vrací vždy hodnoty všech senzorů. Pro přehlednější zpracování
+        jsou uloženy ve slovníku, klíč je vždy znak označující levou (L) nebo
+        pravou (P) stranu a pak uhel v jakém se senzor nachází (senzory vzadu
+        jsou označeny B). Seznam klíčů tedy je {\tt ['R10', 'R45', 'R90', 'RB',
+        'LB', 'L90', 'L45', 'L10']}.
+
+        {\bf Návratová hodnota:} naměřené hodnoty okolního světla.
+        \end{popis}
+
+    \method{{\bf set\_camera}(mode, height, width, zoom)}
+        \begin{popis}
+        Nastavit parametry kamery.
+
+        E-puck obsahuje kameru o rozlišení 640x480, avšak není možné využít
+        její plnou kapacitu z paměťových důvodů. Proto je třeba nastavit jak
+        velký obrázek uživatel očekává a také jaké prokládání má být použito.
+        Kamera je v robotovi umístěna otočená, ale uživatel dostane už obraz
+        správně orotovaný. Je však dobré na tento fakt myslet při zadávání
+        šířky a výšky. Pokud je zoom 2 nebo 4, tak se o prokládání stará přímo
+        kamera a zrychlí se tak patřičně framerate.
+
+        Například pro rozměry 40x40 a zoom 8 robot vezme ze senzorů kamery
+        obdélník velikosti 320x320 a z něj každý 8. pixel.
+
+        Na parametry jsou kladeny následující požadavky:
+        \begin{itemize}
+            \item velikost * zoom nesmí překročit kapacitu kamery,
+            \item velikost dat je omezena velikostí bufferu, který je zhruba
+                4kB a
+            \item zoom by měl být z rychlostních důvodů mocninou dvojky.
+        \end{itemize}
+
+        Na formát fotografie nejsou kladena žádná další omezení, co se poměru
+        stran týče. Je tedy možné získat i lineární obraz 480x1.
+
+        Kamera může fotit v režimu rgb565 anebo v režimu stupňů šedi. Pro každý
+        pixel pak používá buď 16 anebo 8 bitů. V režimu šedi je pak framerate
+        dvojnásobný.
+
+        {\bf Parametry:}
+        \begin{itemize}
+            \item {\bf mode} -- mód kamery, buď \code{Controller.RGB565\_MODE},
+                anebo \\ \code{Controller.GREYSCALE\_MODE},
+            \item {\bf width} (int) -- šířka požadované fotografie,
+            \item {\bf height} (int) -- výška požadované fotografie,
+            \item {\bf zoom} (int) -- velikost prokládání fotografie.
+        \end{itemize}
+        \end{popis}
+    \end{popis}
 %}}}
 %{{{ Seznam literatury
 %%%
