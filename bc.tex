@@ -1238,6 +1238,189 @@ class \code{epuck.{\bf Controller}(port[, asynchronous=False[, timeout=0.5[,\\
             \item {\bf zoom} (int) -- velikost prokládání fotografie.
         \end{itemize}
         \end{popis}
+
+    \method{{\bf get\_camera}()}
+        \begin{popis}
+        Získat nastavení kamery.
+
+        Metoda vrací slovník s parametry odpovídajícími parametrům metody
+        \code{set\_camera()}.
+
+        {\bf Návratová hodnota:} slovník s nastavením kamery:
+        \begin{itemize}
+            \item {\bf mode} -- mód kamery, buď \code{Controller.RGB565\_MODE},
+                anebo \\ \code{Controller.GREYSCALE\_MODE},
+            \item {\bf width} (int) -- šířka požadované fotografie,
+            \item {\bf height} (int) -- výška požadované fotografie,
+            \item {\bf zoom} (int) -- velikost prokládání fotografie.
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf get\_photo}()}
+        \begin{popis}
+        Získat fotku z kamery.
+
+        Fotka je ve formátu, jaký byl zadán metodou \code{set\_camera()}. Pokud
+        nebylo nastavení měněno, tak je získána barevná fotka 40x40 pixelů se
+        zoomem 8.
+
+        Pro ulehčení práce s fotkou je vrácena jako instance třídy \code{Image}
+        z PIL (Python Imaging Library).
+
+        {\bf Návratová hodnota:} Fotka z kamery (typu \code{Image})
+        \end{popis}
+
+    \method{{\bf reset}()}
+        \begin{popis}
+        Resetovat robota.
+
+        Proběhne restart robota. Všechno nastavení se anuluje, robot se
+        zastaví.
+        \end{popis}
+
+    \method{{\bf set\_motor\_pos}(left, right)}
+        \begin{popis}
+        Nastavení čítačů pro krokové motory.
+
+        U obou krokových motorů je možné aktuálnímu pozici kola přiřadit číslo,
+        to pak bude s každým krokem motoru inkrementováno nebo dekrementováno.
+        Pozice se počítají jako 16bitové číslo se znaménkem.
+
+        Počet vykonaných kroků je možné zjistit odečtením nastavených hodnot od
+        hodnot získaných metodou \code{get\_motor\_pos()}.
+
+        {\bf Parametry:}
+        \begin{itemize}
+            \item {\bf left} (int) -- nová hodnota čítače pro levý motor,
+            \item {\bf right} (int) -- nová hodnota čítače pro levý motor.
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf get\_motor\_pos}()}
+        \begin{popis}
+        Získat aktuální hodnotu čítačů krokových motorů.
+
+        U obou krokových motorů je možné aktuálnímu pozici kola přiřadit číslo
+        pomocí metody \code{set\_motor\_pos()}, to pak bude s každým krokem
+        motoru inkrementováno nebo dekrementováno. Pozice se počítají jako
+        16bitové číslo se znaménkem.
+
+        {\bf Návratová hodnota:} dvojice hodnot čítačů (levý motor, pravý
+        motor).
+        \end{popis}
+
+    \method{{\bf get\_raw\_accelerometer}()}
+        \begin{popis}
+        Získat vektor akcelerace.
+
+        Vektor se skládá ze složek x, y a z. Vrácená data jsou uložena ve
+        slovníku, klíčem je vždy směr ("x", "y" nebo "z"). Pro získání
+        praktičtějších dat viz \code{get\_accelerometer()}.
+
+        {\bf Návratová hodnota:} slovník se třemi složkami vektoru akcelerace
+        (klíče jsou "x", "y" a "z")
+        \end{popis}
+
+    \method{{\bf get\_accelerometer}()}
+        \begin{popis}
+        Získat data z akcelerometru ve sférických souřadnicích.
+
+        Robot z vektoru akcelerometru vypočítá tři veličiny, s kterými se lépe
+        pracuje. Jsou jimi zrychlení, náklon a orientace. Všechny tři jsou
+        vyjádřeny ve stupních. Jejich význam je následující:
+
+        \begin{description}
+            \item[Akcelerace] \hfill\\ Velikost vektoru = intenzita zrychlení.
+            \item[Náklon] \hfill \\ \vspace{-5mm}
+                \begin{itemize}
+                    \item 0$^{\circ}$ -- e-puck je horizontálně
+                    \item 90$^{\circ}$ -- e-puck je vertikálně
+                    \item 180$^{\circ}$ -- e-puck je horizontálně, ale vzhůru
+                    nohama
+                \end{itemize}
+            \item[Orientace] -- odklon vektoru od horizontální roviny,
+            0$^{\circ}$ míří dopředu \\ \vspace{-5mm}
+            \begin{itemize}
+                \item 0$^{\circ}$ -- přední část níže než zadní
+                \item 90$^{\circ}$ -- levá část níže než pravá
+                \item 180$^{\circ}$ -- zadní část níže než přední
+                \item 270$^{\circ}$ -- pravá část níže než levá
+            \end{itemize}
+        \end{description}
+
+        {\bf Poznámka:} Uvedené hodnoty veličin byly získány z dokumentace
+        knihovny pro firmware e-puck robota. Při testech ne vždy odpovídaly
+        realitě, proto je důležité si důkladně vyzkoušet jaké hodnoty robot
+        vykazuje při různých činnostech a vytvořit si vlastní závěry.
+
+        {\bf Návratová hodnota:} slovník se třemi veličinami získanými z
+        vektoru akcelerace. Klíče jsou:
+        \begin{itemize}
+            \item {\bf acceleration} -- akcelerace
+            \item {\bf inclination} -- náklon
+            \item {\bf orientation} -- orientace
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf calibrate\_sensors}()}
+        \begin{popis}
+        Kalibrace IR senzorů.
+
+        Pro kalibraci IR senzorů je nutné přesvědčit se, že v dosahu senzorů
+        není žádná překážka. Kalibrace probíhá vždy po zapnutí robota, tedy
+        není nutné ji pouštět manuálně, pouze pokud by senzory vykazovaly
+        nějaké závažnější odchylky v naměřených hodnotách.
+        \end{popis}
+
+    \method{{\bf stop}()}
+        \begin{popis}
+        Zastavit robota.
+
+        Dojde k zastavení motorů robota a k vypnutí všech LED.
+        \end{popis}
+
+    \method{{\bf play\_sound}(sound\_no)}
+        \begin{popis}
+        Přehrát zvuk.
+
+        V robotovi je uloženo 5 zvuků ve formátu wav. Parametr sound\_no
+        označuje číslo zvuku, který se má přehrát:
+
+        \begin{enumerate}
+            \item "haa"
+            \item "spaah"
+            \item "ouah"
+            \item "yaouh"
+            \item "wouaaaaaaaah"
+        \end{enumerate}
+
+        Dle názvů je jasné o jaké zvuky se jedná. Jde o citoslovce výkřiků
+        (robot má většinou tendence narážet do věcí okolo sebe). Pokud bude
+        zadáno jiné číslo, tak dojde k vypnutí speakeru. Tím pádem také
+        přestane šum, který zůstane hrát po přehraném zvuku.
+
+        {\bf Parametry:}
+        \begin{itemize}
+            \item {\bf sound\_no} (int) -- číslo označující zvuk, který se má
+            přehrát
+        \end{itemize}
+        \end{popis}
+
+    \method{{\bf get\_volume}()}
+        \begin{popis}
+        Získat úrovně hlasitosti z mikrofonů.
+
+        Robot disponuje třemi mikrofony rozmístěnými na horní straně. Jsou
+        rozmístěny vlevo, vpravo a vzadu. Protože samotná nahraná data jsou
+        příliš velká, tak robot dokáže pouze poslat úroveň hlasitosti zvuků
+        snímaných jednotlivými mikrofony.
+
+        Data jsou vrácena jako slovník, jednotlivé mikrofony jsou označeny
+        zkratkou jejich umístění ("R", "L", "B").
+
+        {\bf Návratová hodnota:} úroveň hlasitosti na jednotlivých mikrofonech,
+        klíče jsou \code{["R", "L", "B"]}.
+        \end{popis}
     \end{popis}
 %}}}
 %{{{ Seznam literatury
