@@ -803,6 +803,26 @@ value = request.get_response()
     odkaz na tento příkaz, tak stále má možnost získat odpověď. V opačném
     případě už na objekt nic neukazuje a tedy bude smazán.
 
+    Dost často je třeba odpověď ihned použít pro další zpracování a následující
+    příkazy na ní nezáleží. Pak se zdá nutnost neustále kontrolovat, zda už od
+    robota něco přišlo, nepřirozená. Lepší možnost je říct knihovně co se má
+    vykonat po přijetí odpovědi a nechat ji ať se o vše postará sama. Z tohoto
+    důvodu má každý příkaz navíc parametr callback, přes který se může knihovně
+    předat funkce, která bude spuštěna pro přijetí odpovědi. Ukázka je ve
+    zdrojovém kódu \ref{lst:callback}.
+
+    \begin{listing}
+    \begin{pyc}
+>>> def zpracovani_rychlosti(vysledek):
+...    leva, prava = vysledek
+...    # Prace s vysledkem
+...
+>>> controller.get_speed(callback=zpracovani_rychlosti)
+    \end{pyc}
+    \caption{Ukázka použití callback funkce}
+    \label{lst:callback}
+    \end{listing}
+
     \subsection{Časový limit}
 
     Může se stát, že příkaz k robotovi nedorazí. Tato skutečnost se těžko
