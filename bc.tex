@@ -1554,8 +1554,27 @@ class \code{epuck.comm.{\bf RequestHandler}}
 
         Zablokuje vykonávání programu dokud nepřijde odpověď na příkaz.
         \end{popis}
-
 \end{popis}
+
+\subsection{Výjimky}
+
+exception \code{epuck.comm.{\bf CommError}}
+\begin{popis}
+Chyba při komunikaci s robotem. Nejčastější příčinou je, že robot neodpovídá.
+\end{popis}
+
+\vskip5mm \noindent exception \code{epuck.comm.{\bf SyncCommError}}
+\begin{popis}
+Chyba při synchronní komunikaci s robotem.
+\end{popis}
+
+\vskip5mm \noindent exception \code{epuck.comm.{\bf AsyncCommError}}
+\begin{popis}
+Chyba při asynchronní komunikaci s robotem.
+\end{popis}
+
+
+
 
 %}}}
 %{{{ Seznam literatury
