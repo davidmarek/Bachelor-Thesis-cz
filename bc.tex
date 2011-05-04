@@ -823,6 +823,11 @@ value = request.get_response()
     \label{lst:callback}
     \end{listing}
 
+    Při psaní callback funkcí je důležité pamatovat na to, že knihovna volá
+    tyto metody ve stejném vlákně, v jakém provádí vše ostatní. Proto by
+    callback funkce neměla být výpočtově náročná. Složitější operace by si měly
+    vytvořit vlastní vlákno.
+
     \subsection{Časový limit}
 
     Může se stát, že příkaz k robotovi nedorazí. Tato skutečnost se těžko
