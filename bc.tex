@@ -1071,7 +1071,9 @@ while (sensor_values['L10'] < threshold) \
 
 \chapter{Dokumentace API}%{{{
 
-\section{Třída {\tt epuck.{\bf Controller} }}
+\section{Modul {\tt epuck}}
+
+\subsection{Třída \code{Controller}}
 class \code{epuck.{\bf Controller}(port[, asynchronous=False[, timeout=0.5[,\\
         max\_tries=10]]])}
     \begin{popis}
@@ -1447,6 +1449,100 @@ class \code{epuck.{\bf Controller}(port[, asynchronous=False[, timeout=0.5[,\\
         klíče jsou \code{["R", "L", "B"]}.
         \end{popis}
     \end{popis}
+
+\subsection{Výjimky}
+
+\noindent exception \code{epuck.{\bf EPuckError}}
+    \begin{popis}
+    Základní výjimka v modulu \code{epuck}. Všechny ostatní od ní dědí.
+    \end{popis}
+
+\vskip5mm
+\noindent exception \code{epuck.{\bf ControllerError}}
+    \begin{popis}
+    Chyba při práci s robotem. Například se nepovedlo k robotovi vůbec
+    připojit.
+    \end{popis}
+
+\vskip5mm
+\noindent exception \code{epuck.{\bf WrongCommand}}
+    \begin{popis}
+    Specializace výjimky ControllerError. Uživatel nejspíše zadal špatný
+    příkaz, např. parametry, které jsou mimo povolené rozsahy.
+    \end{popis}
+
+\section{Modul {\tt epuck.comm}}
+Při komunikaci s robotem si uživatel může vybrat mezi synchronní anebo
+asynchronní komunikací. Rozhodnutí uživatele při vytváření instance třídy
+\code{Controller} rozhodne o tom, zda-li se pro komunikaci s robotem využije
+třída \code{SyncComm} anebo \code{AsyncComm}. Přesný popis těchto tříd je k
+nalezení v programátorské dokumentaci, uživatel je využívá pouze
+prostřednictvím třídy \code{Controller}.
+
+Důležité je ovšem vědět jaké výjimky můžou vzniknout při komunikaci s robotem.
+Všechny výjimky samozřejmě dědí od \code{EPuckError}. Obecně pro chybu při
+komunikaci slouží výjimka \code{CommError}. Od ní pak dědí výjimky pro
+jednotlivé druhy komunikace: \code{SyncCommError} a \code{AsyncCommError}.
+
+Další důležitý rozdíl mezi sériovou a asynchronní komunikací je ve vrácené
+hodnotě z metod třídy \code{Controller}. Pro synchronní komunikaci jsou vrácena
+přímo odpověď. Pro asynchronní komunikaci je ovšem vrácen pouze instance třídy
+\code{RequestHandler}, pomocí kterého uživatel může zjistit zda-li už byla
+přijata odpověď a posléze ji získat.
+
+\subsection{Odpověď u asynchronní komunikace}
+class \code{epuck.comm.{\bf RequestHandler}}
+\begin{popis}
+    Jedná se o objekt reprezentující odpověď na příkaz zaslaný robotovi při
+    asynchronní komunikaci. U asynchronní komunikace je důležité, aby poslání
+    příkazu nezablokovalo vlákno, v kterém byl příkaz poslán. Proto není možné
+    čekat na odpověď. Uživatel ovšem nezůstane bez odpovědi. Příkaz mu vrátí
+    právě tento handler, pomocí kterého dokáže zjistit, zda-li už odpověď došla
+    a případně i získat onu odpověď.
+
+    \method{{\bf response\_received}()}
+        \begin{popis}
+        Slouží ke kontrole, zda-li už došla odpověď od robota. Neblokuje vlákno
+        a nevrací odpověď. K jejímu získání slouží metoda
+        \code{get\_response()}.
+
+        {\bf Návratová hodnota: } informace, zda-li už došla odpověď.
+        \end{popis}
+
+    \method{{\bf get\_response}()}
+        \begin{popis}
+        Zkontroluje, zda-li došla odpověď, pokud ano, tak ji vrátí, v opačném
+        případě počká dokud nedorazí a pak ji vrátí. Z toho důvodu zablokuje
+        vlákno, pokud ještě odpověď nedošla.
+
+        Pokud je možné pokračovat ve vykonávání program bez této odpovědi, tak
+        se doporučuje nejprve kontrolovat přítomnost odpovědi pomocí metody
+        \code{response\_received()}.
+
+        {\bf Návratová hodnota: } odpověď od robota, přesný druh odpovědi k
+        nalezení v dokumentaci třídy \code{Controller}.
+        \end{popis}
+
+    \method{{\bf error\_raised}()}
+        \begin{popis}
+        Kontrola, zda-li při vykonání příkazu nevznikla výjimka.
+
+        Výjimka je uložena v atributu \code{error}. Bude vyhozena pokud se
+        uživatel pokusí přistoupit k odpovědi, anebo zavolá metodu
+        \code{join}.
+
+        {\bf Návratová hodnota:} byla vyhozena výjimka.
+        \end{popis}
+
+    \method{{\bf join}()}
+        \begin{popis}
+        Vyčkání na provedení příkazu.
+
+        Zablokuje vykonávání programu dokud nepřijde odpověď na příkaz.
+        \end{popis}
+
+\end{popis}
+
 %}}}
 %{{{ Seznam literatury
 %%%
