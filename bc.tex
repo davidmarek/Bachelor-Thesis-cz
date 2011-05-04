@@ -864,6 +864,19 @@ value = request.get_response()
 %}}}
 \chapter{Uživatelská dokumentace} %{{{
 
+    Interakce uživatele s knihovnou se skládá ze dvou částí. V té první se
+    jedná o připojení robota k počítači a uvedení jej do provozuschopného
+    stavu. Součástí této inicialize je vytvoření spojení mezi počítačem a
+    robotem a nainstalování firmware do robota. Vysvětlení jak se vše provádí
+    je k nalezení v kapitole \ref{pripojeni_robota}.
+
+    V druhém kroku už je robot připojený a tedy už mu můžeme posílat příkazy.
+    Kapitola \ref{Implementace} rozebírá jednoduchý ovládací program robota.
+    Předchozí kapitola uvádí ukázky komunikace s robotem, ale až v kapitole
+    \ref{ukazkovy_program} nalezne čitatel ucelený zdrojový kód, který se stará
+    o ovládání robota od vytvoření prvotního spojení až po zastavení motorů po
+    skončení programu.
+
     \section{Připojení robota}
     \label{pripojeni_robota}
 
@@ -932,6 +945,7 @@ value = request.get_response()
     \end{itemize}
 
     \section{Ukázkový program}
+    \label{ukazkovy_program}
 
     Pro ovládání robota slouží modul {\tt epuck} a objekt {\tt Controller}.
     Ovládání robota je velmi jednoduché. Ukážeme si program pro pohyb robota
