@@ -2,8 +2,10 @@
 *.dvi
 *.log
 *.out
+*.ins
 *.bbl
 *.blg
+*.dtx
 *.mbs
 *.dbj
 *.vrb
