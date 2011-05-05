@@ -2,6 +2,13 @@
 *.dvi
 *.log
 *.out
+*.bbl
+*.blg
+*.mbs
+*.dbj
+*.vrb
+*.snm
+*.nav
 *.mp
 *.mps
 *.pdf
