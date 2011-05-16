@@ -283,6 +283,13 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     komukoli využívat e-puck robota na maximum a vyvíjet pro něj ať už
     software, anebo např. hardwarové nádstavby.
 
+    \begin{listing}
+        \begin{center}
+            \includegraphics[scale=0.5]{e-puck.jpg}
+            \caption{E-puck robot}
+        \end{center}
+    \end{listing}
+
     E-puck robot byl vytvořen s několika kritérii \cite{bonani}:
     \begin{itemize}
         \item Stolní velikost -- možnost experimentovat s robotem přímo u
@@ -1161,7 +1168,7 @@ while (sensor_values['L10'] < threshold) \
     \end{pyc*}
 
     Kontrolujeme zde, zda-li  před robotem nic není. Bižší popis je v
-    dokumentaci metod. V případě, že před robotem nic není můžeme program na
+    dokumentaci metod. V případě, že před robotem nic není, můžeme program na
     chvíli uspat, zatím se robot posune o kus dál a my můžeme znova
     zkontrolovat senzory:
 
@@ -1680,8 +1687,8 @@ def show_photo():
 \label{photo_resize}
 \end{listing}
 
-Výsledek je převeden do formátu obrázků pro OpenCV. Dáke je zavolán algoritmus
-pro detekci obličejů, ty jsou zakresleny do fotky (zdrojový kód
+Výsledek je převeden do formátu obrázků pro OpenCV. Dále je zavolán algoritmus
+pro detekci obličejů, nalezené obličeje jsou zakresleny do fotky (zdrojový kód
 \ref{opencv_part}).
 
 \begin{listing}
