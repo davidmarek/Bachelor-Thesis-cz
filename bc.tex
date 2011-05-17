@@ -168,7 +168,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     e-puck robota. Tato knihovna jim umožní ovládat všechny části robota z PC
     přes Bluetooth spojení. Díky tomu budou moci využít výkonu svého počítače
     pro vytváření programů, které by nebylo možné uskutečnit v robotovi kvůli
-    omezením v jeho mikrokontroleru.
+    omezením jeho mikrokontroleru.
 
     Většina knihoven pro ovládání robota umožňuje pouze synchronní komunikaci.
     Součástí této práce ovšem bude i možnost provádět příkazy asynchronně. Z
@@ -179,7 +179,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     mikrofonu).
 
     Práce by měla sloužit pro potřeby studentů zajímajících se o vývoj
-    programu pro ovládání e-puck robota. Pro seznámení s knihovnou a možnostmi
+    programů pro ovládání e-puck robota. Pro seznámení s knihovnou a možnostmi
     robota tedy bude součástí knihovny i několik ukázkových programů. Umožní
     čitateli napsat si svůj vlastní program velmi rychle, s využitím konstrukcí
     ukázaných v příkladech, anebo pouze inspirováním.
@@ -187,7 +187,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     Knihovna bude mít velmi jednoduché rozhraní, díky kterému bude možné
     ovládat robota bez složité inicializace, kupříkladu i interaktivně z
     interpretu Pythonu. Také bude možné knihovnu používat ve spolupráci s
-    externími knihovnami. Výsledkem bude jednoduché vytváření grafických
+    externími knihovnami. Výsledkem bude např. jednoduché vytváření grafických
     aplikací, anebo zpracování obrázků z kamery pomocí externích nástrojů.
 
     \section{Přehled kapitol}
@@ -206,8 +206,7 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     počítačem, na kterém je spuštěn ovládací program. Kapitola \ref{sync/async}
     představuje rozdíly mezi komunikací synchronní a asynchronní. Vysvětluje
     jaké jsou výhody a nevýhody obou řešení a jak se s nimi e-puck knihovna
-    vyrovnává. V části \ref{comm-epuck} je popsáno jak vypadá komunikace s
-    e-puck robotem z pohledu robota.
+    vyrovnává.
 
     V kapitole \ref{existujici prace} čitatel zjistí, že tato práce není
     jediným pokusem o knihovnu pro ovládání robota. Bude představeno několik
@@ -223,8 +222,8 @@ Supervisor's e-mail address: e-mailová adresa vedoucího\\
     \subsection{Praktická část}
     V druhé části práce bude představena implementace knihovny. Bude
     vysvětleno, jak byly použity mechanismy představené v teoretické části,
-    díky kterým může být situace asynchronní a také mohla být rozšířena
-    funkčnost robota.
+    díky kterým může být komunikace asynchronní. Také budou představeny
+    přídavky ke standardním možnostem robota.
 
     V kapitole \ref{btcom} je představen firmware BTcom, jak funguje posílání
     příkazů robotovi a také zde jsou popsány všechny změny, které byly vykonány
@@ -1601,6 +1600,9 @@ root = Tk()
 img_face = Label(root)
 img_face.pack()
 
+# Load face definitions
+cascade = cv.Load('haarcascade_frontalface_alt.xml')
+
 def show_photo():
     # Get the photo
     img = c.get_photo() \
@@ -1614,7 +1616,6 @@ def show_photo():
     # Find any faces in the image
     storage = cv.CreateMemStorage(0)
     cv.EqualizeHist(cv_img, cv_img)
-    cascade = cv.Load('haarcascade_frontalface_alt.xml')
     faces = cv.HaarDetectObjects(cv_img, 
                 cascade, 
                 storage, 
@@ -1653,7 +1654,7 @@ Program se skládá z několika částí, které využívají jednotlivé knihov
 začátku (zdrojový kód \ref{kamera_okno}) je třeba nastavit kameru robota. Pro
 detekci obličejů se používá černobilých fotek, takže bylo možné zvětšit
 velikost fotografie. Dále je nutné vytvořit grafické okno pomocí knihovny
-Tkinter.
+Tkinter a načíst data pro knihovnu OpenCV, která používá pro detekci obličejů.
 
 \begin{listing}
 \begin{pyc*}{firstnumber=20}
@@ -1665,6 +1666,9 @@ c.set_camera(Controller.GREYSCALE_MODE, 55, 55, 8)
 root = Tk()
 img_face = Label(root)
 img_face.pack()
+
+# Load face definitions
+cascade = cv.Load('haarcascade_frontalface_alt.xml')
 \end{pyc*}
 \caption{Nastavení kamery a vytvoření okna}
 \label{kamera_okno}
@@ -1676,7 +1680,7 @@ robota. Nejprve (zdrojový kód \ref{photo_resize}) je získána fotka, ta je
 následně zvětšena pro lepší prohlížení.
 
 \begin{listing}
-\begin{pyc*}{firstnumber=29}
+\begin{pyc*}{firstnumber=32}
 def show_photo():
     # Get the photo
     img = c.get_photo() \
@@ -1692,7 +1696,7 @@ pro detekci obličejů, nalezené obličeje jsou zakresleny do fotky (zdrojový 
 \ref{opencv_part}).
 
 \begin{listing}
-\begin{pyc*}{firstnumber=35}
+\begin{pyc*}{firstnumber=38}
     # Convert the photo for OpenCV
     cv_img = cv.CreateImageHeader(img.size, cv.IPL_DEPTH_8U, 1)
     cv.SetData(cv_img, img.tostring())
@@ -1700,7 +1704,6 @@ pro detekci obličejů, nalezené obličeje jsou zakresleny do fotky (zdrojový 
     # Find any faces in the image
     storage = cv.CreateMemStorage(0)
     cv.EqualizeHist(cv_img, cv_img)
-    cascade = cv.Load('haarcascade_frontalface_alt.xml')
     faces = cv.HaarDetectObjects(cv_img, 
                 cascade, 
                 storage, 
@@ -1728,7 +1731,7 @@ aktualizovat téměř v reálném čase (samozřejmě je snímání fotky v robo
 znatelné na časové prodlevě).
 
 \begin{listing}
-\begin{pyc*}{firstnumber=59}
+\begin{pyc*}{firstnumber=61}
     # Show the image with faces
     image = PhotoImage(img)
     img_face.config(image=image)
@@ -1745,7 +1748,110 @@ znatelné na časové prodlevě).
 
     \section{Zhodnocení práce}
 
+    Ve své práci jsem splnil všechny cíle, které jsem si vytyčil. Vznikla
+    knihovna, která v sobě odráží základní myšlenku programovacího jazyka
+    Python, ve kterém je napsána. Programování je intuitivní, lehce
+    pochopitelné, je možné rychlé prototypování třeba jen části kódu, nebo
+    interaktivní ovládání robota z interpretu. Na druhou stranu knihovna nabízí
+    i podporu pro vytváření aplikací, kde se můžeme spolehnout, že každý
+    zaslaný příkaz bude proveden.
+
+    Uživatel dostává možnost si vybrat mezi transparentní synchronní
+    komunikací, anebo asynchronní komunikací, u které nemusí čekat na přijetí
+    odpovědi. Tady se jedná o velkou výhodu pro vytváření aplikací, které mohou
+    pracovat s došlými daty, zatímco čekají na další, anebo jde pouze o
+    interaktivitu aplikace, kde není přípustné, aby docházelo k prodlevám,
+    zatímco program čeká na odpověď.
+
+    Dalším úspěchem je přepracování firmware BTcom, napsaného v jazyku C a
+    nahrávaného přímo do robota, který je standardně dodáván s e-puck robotem.
+    Díky mým úpravám je možné velmi přesně párovat zaslané příkazy a došlé
+    odpovědi. Dále jsem upravil binární odpovědi, aby začínaly hlavičkou
+    obsahující informace o příkazu a velikost přenášených dat. Zpracování došlé
+    binární odpovědi tak není závislé na hádání, ke kterému příkazu odpověď
+    patří. Díky těmto změnám jsem mohl vytvořit kontrolní mechanismy
+    zabraňující ztrátě příkazů. Každý příkaz má danou časovou lhůtu, do které
+    musí dojít odpověď, jinak je považován za ztracený a odeslán znova.
+
+    Pokusil jsem se i vyřešit některé základní problémy, které provázejí e-puck
+    robota. Situaci, kdy robot přestává reagovat, protože mu dochází baterie,
+    jsem vyřešil optickou signalizací. Jedná se na první pohled o drobnou
+    změnu, ovšem pro programování robota jde o neocenitelnou pomůcku. Obzvlášť
+    když si student robota půjčuje v počítačové laboratoři a tak si nikdy
+    nemůže být jistý, kdy byl naposledy dobíjen.
+
+    Pro uživatele knihoven neexistuje nic horšího, než když mají dokumentaci
+    jednotlivých metod, ale nedočtou se jak tyto spojit dohromady a vytvořit
+    tak ucelený program. Proto jsem jako součást práce napsal několik
+    ukázkových programů, které ukazují jak snadné je knihovnu používat a
+    integrovat s jinými knihovnami. Ovládání robota jde triviálně propojit s
+    grafickým rozhraním pomocí knihovny Tkinter, s fotkami získanými z kamery
+    robota jde pracovat pomocí Python Imaging Library (PIL) a díky tomu je
+    možné použít libovolnou knihovnu pro práci s obrázky (např. OpenCV pro
+    počítačové vidění).
+
     \section{Benchmark knihovny}
+
+    Pro vzdálené ovládání robota je důležité jak rychle můžeme reagovat na
+    podněty z prostředí. Vyzkoušíme si tedy některé základní příkazy a budeme
+    stopovat jak rychle se provádějí.
+
+    Nejprve začneme zjištěním údajů ze senzorů překážek. Kód \ref{time1} (pouze
+    relevantní část) měří kolikrát za sekundu je možné získat údaje z IR
+    senzorů. Program jsem nechal běžet 500 sekund. Nejlepší výsledek bylo 50
+    zavolání příkazu, nejhorší výsledek bylo jen 30 zavolání příkazu, v průměru
+    bylo posláno 39 příkazů. To je tedy v průměru 25ms na jednu iteraci.
+
+\begin{listing}
+\begin{pyc}
+start_time = time.time()
+count = [0]
+while True:
+    prox = c.get_proximity_sensors().get_response()
+    count[-1] += 1
+    if time.time() - start_time > 1:
+        print count
+        count.append(0)
+        start_time = time.time()
+\end{pyc}
+\caption{Stopování rychlosti senzorů překážek}
+\label{time1}
+\end{listing}
+
+    Zkusíme, jak moc se od sebe liší různé příkazy. V kódu \ref{time2} budeme
+    získávat fotku z kamery. Pro barevné fotky s rozměry 40x40 je možné za
+    sekundu v průměru získat 3 snímky. Tady musíme započítat i převod z módu
+    RGB565 do formátu používaného knihovnou PIL. Pokud nám bude stačit pouze
+    černobílý obrázek stejných rozměrů, tak za sekundu jsme schopni jich získat
+    v průměru 5.
+
+\begin{listing}
+\begin{pyc}
+start_time = time.time()
+count = [0]
+while True:
+    c.get_photo().get_response()
+    count[-1] += 1
+    if time.time() - start_time > 1:
+        print count
+        count.append(0)
+        start_time = time.time()
+        \end{pyc}
+\caption{Stopování rychlosti kamery}
+\label{time2}
+\end{listing}
+
+    Stačilo nám tedy jen pár pokusů abychom zjistili, že možný počet zaslaných
+    příkazů za sekundu se dramaticky liší v závislosti na typu příkazu anebo
+    jeho parametrech. Důležité je také si uvědomit, že při asynchronní
+    komunikaci po zavolání příkazu nemusíme čekat na odpověď a můžeme tedy
+    ihned volat další příkaz. To s sebou nese jedno riziko, pokud budeme
+    posílat nové příkazy rychleji, než je stíhá robot vykonávat, tak nám může
+    přetéct fronta příkazů, která není nekonečná. Každé zavolání příkazu, který
+    potřebuje načíst data nám tuto frontu vyprázdní, protože se vždy musejí
+    provést všechny předchozí příkazy a teprve pak je možné získat data, ale i
+    tak je dobrým zvykem omezit maximální rychlost smyčky programu krátkou
+    pauzou.
 
 %}}}
 \appendix
