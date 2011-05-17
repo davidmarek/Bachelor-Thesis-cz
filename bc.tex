@@ -2236,6 +2236,25 @@ class \code{epuck.{\bf Controller}(port[, asynchronous=False[, timeout=0.5[,\\
         {\bf Návratová hodnota:} úroveň hlasitosti na jednotlivých mikrofonech,
         klíče jsou \code{["R", "L", "B"]}.
         \end{popis}
+
+    \method{{\bf get\_microphone}(on)}
+        \begin{popis}
+        Získání hodnot z mikrofonu.
+
+        Začne načítání dat z mikrofonu. Tato data pak budou převedena v
+        robotovi pomocí FFT a zaslána do počítače. Jakmile je jednou zapnuto
+        nahrávání, tak každý následující příkaz si už jen vyzvedne připravená
+        data.
+
+        Data jsou vrácena jako seznam komplexních čísel.
+
+        {\bf Parametry:}
+        \begin{itemize}
+            \item {\bf on} (int) -- zapnout / vypnout nahrávání dat z mikrofonu
+        \end{itemize}
+
+        {\bf Návratová hodnota:} seznam dat získaných z FFT
+        \end{popis}
     \end{popis}
 
 \subsection{Výjimky}
