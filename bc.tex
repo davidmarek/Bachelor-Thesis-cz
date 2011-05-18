@@ -990,6 +990,71 @@ value = request.get_response()
     převést fotku z formátu, který používá robot, do formátu standardní
     knihovny Pythonu.
 
+    \section{Výkon knihovny}
+    \label{benchmark}
+
+    Pro dálkové ovládání robota je důležité jak rychle můžeme reagovat na
+    podněty z prostředí. Vyzkoušíme si tedy některé základní příkazy a budeme
+    stopovat jak rychle se provádějí.
+
+    Nejprve začneme zjištěním údajů ze senzorů překážek. Kód \ref{time1} (pouze
+    relevantní část) měří kolikrát za sekundu je možné získat údaje z IR
+    senzorů. Program jsem nechal běžet 500 sekund. Nejlepší výsledek bylo 50
+    zavolání příkazu, nejhorší výsledek bylo jen 30 zavolání příkazu, v průměru
+    bylo posláno 39 příkazů. To je tedy v průměru 25ms na jednu iteraci.
+
+\begin{listing}
+\begin{pyc}
+start_time = time.time()
+count = [0]
+while True:
+    prox = c.get_proximity_sensors().get_response()
+    count[-1] += 1
+    if time.time() - start_time > 1:
+        print count
+        count.append(0)
+        start_time = time.time()
+\end{pyc}
+\caption{Stopování rychlosti senzorů překážek}
+\label{time1}
+\end{listing}
+
+    Zkusíme, jak moc se od sebe liší různé příkazy. V kódu \ref{time2} budeme
+    získávat fotku z kamery. Pro barevné fotky s rozměry 40x40 je možné za
+    sekundu v průměru získat 3 snímky. Tady musíme započítat i převod z módu
+    RGB565 do formátu používaného knihovnou PIL. Pokud nám bude stačit pouze
+    černobílý obrázek stejných rozměrů, tak za sekundu jsme schopni jich získat
+    v průměru 5.
+
+\begin{listing}
+\begin{pyc}
+start_time = time.time()
+count = [0]
+while True:
+    c.get_photo().get_response()
+    count[-1] += 1
+    if time.time() - start_time > 1:
+        print count
+        count.append(0)
+        start_time = time.time()
+        \end{pyc}
+\caption{Stopování rychlosti kamery}
+\label{time2}
+\end{listing}
+
+    Stačilo nám tedy jen pár pokusů abychom zjistili, že možný počet zaslaných
+    příkazů za sekundu se dramaticky liší v závislosti na typu příkazu anebo
+    jeho parametrech. Důležité je také si uvědomit, že při asynchronní
+    komunikaci po zavolání příkazu nemusíme čekat na odpověď a můžeme tedy
+    ihned volat další příkaz. To s sebou nese jedno riziko, pokud budeme
+    posílat nové příkazy rychleji, než je stíhá robot vykonávat, tak nám může
+    přetéct fronta příkazů, která není nekonečná. Každé zavolání příkazu, který
+    potřebuje načíst data nám tuto frontu vyprázdní, protože se vždy musejí
+    provést všechny předchozí příkazy a teprve pak je možné získat data, ale i
+    tak je dobrým zvykem omezit maximální rychlost smyčky programu krátkou
+    pauzou.
+
+
 %}}}
 \chapter{Uživatelská dokumentace} %{{{
 \label{dokumentace}
@@ -1807,68 +1872,13 @@ znatelné na časové prodlevě).
     možné použít libovolnou knihovnu pro práci s obrázky (např. OpenCV pro
     počítačové vidění).
 
-    \section{Benchmark knihovny}
-
-    Pro dálkové ovládání robota je důležité jak rychle můžeme reagovat na
-    podněty z prostředí. Vyzkoušíme si tedy některé základní příkazy a budeme
-    stopovat jak rychle se provádějí.
-
-    Nejprve začneme zjištěním údajů ze senzorů překážek. Kód \ref{time1} (pouze
-    relevantní část) měří kolikrát za sekundu je možné získat údaje z IR
-    senzorů. Program jsem nechal běžet 500 sekund. Nejlepší výsledek bylo 50
-    zavolání příkazu, nejhorší výsledek bylo jen 30 zavolání příkazu, v průměru
-    bylo posláno 39 příkazů. To je tedy v průměru 25ms na jednu iteraci.
-
-\begin{listing}
-\begin{pyc}
-start_time = time.time()
-count = [0]
-while True:
-    prox = c.get_proximity_sensors().get_response()
-    count[-1] += 1
-    if time.time() - start_time > 1:
-        print count
-        count.append(0)
-        start_time = time.time()
-\end{pyc}
-\caption{Stopování rychlosti senzorů překážek}
-\label{time1}
-\end{listing}
-
-    Zkusíme, jak moc se od sebe liší různé příkazy. V kódu \ref{time2} budeme
-    získávat fotku z kamery. Pro barevné fotky s rozměry 40x40 je možné za
-    sekundu v průměru získat 3 snímky. Tady musíme započítat i převod z módu
-    RGB565 do formátu používaného knihovnou PIL. Pokud nám bude stačit pouze
-    černobílý obrázek stejných rozměrů, tak za sekundu jsme schopni jich získat
-    v průměru 5.
-
-\begin{listing}
-\begin{pyc}
-start_time = time.time()
-count = [0]
-while True:
-    c.get_photo().get_response()
-    count[-1] += 1
-    if time.time() - start_time > 1:
-        print count
-        count.append(0)
-        start_time = time.time()
-        \end{pyc}
-\caption{Stopování rychlosti kamery}
-\label{time2}
-\end{listing}
-
-    Stačilo nám tedy jen pár pokusů abychom zjistili, že možný počet zaslaných
-    příkazů za sekundu se dramaticky liší v závislosti na typu příkazu anebo
-    jeho parametrech. Důležité je také si uvědomit, že při asynchronní
-    komunikaci po zavolání příkazu nemusíme čekat na odpověď a můžeme tedy
-    ihned volat další příkaz. To s sebou nese jedno riziko, pokud budeme
-    posílat nové příkazy rychleji, než je stíhá robot vykonávat, tak nám může
-    přetéct fronta příkazů, která není nekonečná. Každé zavolání příkazu, který
-    potřebuje načíst data nám tuto frontu vyprázdní, protože se vždy musejí
-    provést všechny předchozí příkazy a teprve pak je možné získat data, ale i
-    tak je dobrým zvykem omezit maximální rychlost smyčky programu krátkou
-    pauzou.
+    Provedl jsem měření rychlosti knihovny. Zjistil jsem, že možný
+    počet předaných příkazů za sekundu záleží na složitosti příkazu.
+    Pro jednoduché příkazy byla dosáhnutá rychlost okolo 40 příkazů za sekundu.
+    Za dostatečnou se považuje rychlost přes 10 příkazů za sekundu a tedy
+    e-puck knihovna v tomto ohledu obstála bez problémů. I přes přidané
+    ověřovací podprogramy je rychlost nadprůměrná, což ukazuje, že knihovna je
+    dobře napsána.
 
 %}}}
 \appendix
