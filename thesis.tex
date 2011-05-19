@@ -38,8 +38,7 @@
 %% Pokud používáte csLaTeX (doporučeno):
 %\usepackage{czech}
 %% Pokud nikoliv:
-\usepackage[czech,english]{babel}
-\selectlanguage{english}
+\usepackage[czech]{babel}
 \usepackage[T1]{fontenc}
 
 %% Použité kódování znaků: obvykle latin2, cp1250 nebo utf8:
@@ -126,18 +125,19 @@
 \include{tex/appendix}
 
 %%% Seznam použité literatury
-\include{tex/biblio}
+\bibliographystyle{czechiso}
+\bibliography{literatura}
 
 %%% Tabulky v bakalářské práci, existují-li.
-\chapwithtoc{List of Tables}
+%\chapwithtoc{List of Tables}
 
 %%% Použité zkratky v bakalářské práci, existují-li, včetně jejich vysvětlení.
-\chapwithtoc{List of Abbreviations}
+%\chapwithtoc{List of Abbreviations}
 
 %%% Přílohy k bakalářské práci, existují-li (různé dodatky jako výpisy
 %%% programů, diagramy apod.). Každá příloha musí být alespoň jednou
 %%% odkazována z vlastního textu práce. Přílohy se číslují.
-\chapwithtoc{Attachments}
+%\chapwithtoc{Attachments}
 
 \openright
 \end{document}
