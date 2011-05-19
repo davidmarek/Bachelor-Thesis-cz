@@ -1,0 +1,51 @@
+\chapter{Závěr}
+
+    Ve své práci jsem splnil všechny cíle, které jsem si vytyčil. Vznikla
+    knihovna, která v sobě odráží základní myšlenku programovacího jazyka
+    Python, ve kterém je napsána. Programování je intuitivní, lehce
+    pochopitelné, je možné rychlé prototypování třeba jen části kódu, nebo
+    interaktivní ovládání robota z interpretu. Na druhou stranu knihovna nabízí
+    i podporu pro vytváření aplikací, kde se můžeme spolehnout, že každý
+    zaslaný příkaz bude proveden.
+
+    Uživatel dostává možnost si vybrat mezi transparentní synchronní
+    komunikací, anebo asynchronní komunikací, u které nemusí čekat na přijetí
+    odpovědi. Tady se jedná o velkou výhodu pro vytváření aplikací, které mohou
+    pracovat s došlými daty, zatímco čekají na další, anebo jde pouze o
+    interaktivitu aplikace, kde není přípustné, aby docházelo k prodlevám,
+    zatímco program čeká na odpověď.
+
+    Dalším úspěchem je přepracování firmware BTcom, napsaného v jazyku C a
+    nahrávaného přímo do robota, který je standardně dodáván s e-puck robotem.
+    Díky mým úpravám je možné velmi přesně párovat zaslané příkazy a došlé
+    odpovědi. Dále jsem upravil binární odpovědi, aby začínaly hlavičkou
+    obsahující informace o příkazu a velikost přenášených dat. Zpracování došlé
+    binární odpovědi tak není závislé na hádání, ke kterému příkazu odpověď
+    patří. Díky těmto změnám jsem mohl vytvořit kontrolní mechanismy
+    zabraňující ztrátě příkazů. Každý příkaz má danou časovou lhůtu, do které
+    musí dojít odpověď, jinak je považován za ztracený a odeslán znova.
+
+    Pokusil jsem se i vyřešit některé základní problémy, které provázejí e-puck
+    robota. Situaci, kdy robot přestává reagovat, protože mu dochází baterie,
+    jsem vyřešil optickou signalizací. Jedná se na první pohled o drobnou
+    změnu, ovšem pro programování robota jde o neocenitelnou pomůcku. Obzvlášť
+    když si student robota půjčuje v počítačové laboratoři a tak si nikdy
+    nemůže být jistý, kdy byl naposledy dobíjen.
+
+    Pro uživatele knihoven neexistuje nic horšího, než když mají dokumentaci
+    jednotlivých metod, ale nedočtou se jak tyto spojit dohromady a vytvořit
+    tak ucelený program. Proto jsem jako součást práce napsal několik
+    ukázkových programů, které ukazují jak snadné je knihovnu používat a
+    integrovat s jinými knihovnami. Ovládání robota jde triviálně propojit s
+    grafickým rozhraním pomocí knihovny Tkinter, s fotkami získanými z kamery
+    robota jde pracovat pomocí Python Imaging Library (PIL) a díky tomu je
+    možné použít libovolnou knihovnu pro práci s obrázky (např. OpenCV pro
+    počítačové vidění).
+
+    Provedl jsem měření rychlosti knihovny. Zjistil jsem, že možný
+    počet předaných příkazů za sekundu záleží na složitosti příkazu.
+    Pro jednoduché příkazy byla dosáhnutá rychlost okolo 40 příkazů za sekundu.
+    Za dostatečnou se považuje rychlost přes 10 příkazů za sekundu a tedy
+    e-puck knihovna v tomto ohledu obstála bez problémů. I přes přidané
+    ověřovací podprogramy je rychlost nadprůměrná, což ukazuje, že knihovna je
+    dobře napsána.

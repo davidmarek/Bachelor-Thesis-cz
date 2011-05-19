@@ -1,0 +1,214 @@
+\chapter{Uživatelská dokumentace}
+\label{dokumentace}
+
+    Interakce uživatele s knihovnou se skládá ze dvou částí. V té první se
+    jedná o připojení robota k počítači a uvedení jej do provozuschopného
+    stavu. Součástí této inicialize je vytvoření spojení mezi počítačem a
+    robotem a nainstalování firmware do robota. Vysvětlení jak se vše provádí
+    je k nalezení v kapitole \ref{pripojeni_robota}.
+
+    V druhém kroku už je robot připojený a tedy už mu můžeme posílat příkazy.
+    Kapitola \ref{Implementace} rozebírá jednoduchý ovládací program robota.
+    Předchozí kapitola uvádí ukázky komunikace s robotem, ale až v kapitole
+    \ref{ukazkovy_program} nalezne čitatel ucelený zdrojový kód, který se stará
+    o ovládání robota od vytvoření prvotního spojení až po zastavení motorů po
+    skončení programu.
+
+    \section{Připojení robota}
+    \label{pripojeni_robota}
+
+    Pro využívání knihovny je nutné mít robota připojeného k PC. Robot se chová
+    jako standardní Bluetooth zařízení. Poskytuje pouze jedinou službu a to
+    sériovou komunikaci. Je tedy potřeba nakonfigurovat sériový port, přes
+    který bude knihovna s robotem komunikovat.
+
+    \subsection{Příprava}
+
+    E-puck robot s počítačem komunikuje pomocí Bluetooth. Pro připojení robota
+    k počítači na operačním systému Linux je tedy třeba mít nainstalovánu
+    podporu pro Bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
+    bluez-utils}, dále je potřeba mít software pro správu pin ({\tt bluez-pin,
+    bluez-gnome a bluetooth-applet, \ldots}).
+
+    Nejprve je potřeba zjistit adresu robota. Lze využít utilitu {\tt hcitool}:
+
+    \begin{verbatim}
+    $ hcitool scan
+    \end{verbatim}
+
+    Adresa robota se použije při nastavení virtuálního sériového portu v
+    souboru {\tt /etc/bluetooth/rfcomm.conf}:
+
+    \begin{verbatim}
+    rfcomm0 {
+        bind yes;
+        device 08:00:17:2C:E0:88; # Adresa zařízení
+        channel 1;
+        comment "e-puck_0006";    # Vlastní komentář
+    }
+    \end{verbatim}
+
+    Tím jsme nakonfigurovali zařízení {\tt /dev/rfcomm0}.
+
+    \subsection{Přípojení}
+
+    Zařízení reprezentující spojení s robotem jsme nakonfigurovali, nyní zbývá
+    připojit robota:
+
+    \begin{verbatim}
+    $ rfcomm connect rfcomm0
+    \end{verbatim}
+
+    Po těchto příkazech by už mělo být vytvořené spojení s robotem a je možné
+    mu začít posílat příkazy pomocí knihovny. V průběhu připojení se systém
+    může dotázat na PIN, který je potřeba pro spárování zařízení pomocí
+    Bluetooth.
+
+    \subsection{Přehled možných chyb}
+    Při připojení se můžou vyskytnou chyby, nejčastější jsou tyto:
+    \begin{itemize}
+    \item{{\em Can't connect RFCOMM socket: Connection refused} -- Nejspíše
+        neběží žádná aplikace, která by se na heslo zeptala. Je třeba spustit
+        např. {\tt bluetooth-applet}.}
+    \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná
+        příčína je už připojené zařízení. Buď už běží {\tt rfcomm}, anebo jiná
+        aplikace, která s robotem udržuje komunikaci. Řešením je zavřít
+        aplikace komunikující s robotem, popř. zkusit následující příkazy:
+    \begin{verbatim}
+    $ rfcomm release rfcomm0
+    $ rfcomm connect rfcomm0
+    \end{verbatim}
+    }
+    \end{itemize}
+
+\section{Ukázkový program}
+\label{ukazkovy_program}
+
+    Pro ovládání robota slouží modul {\tt epuck} a objekt {\tt Controller}.
+    Ovládání robota je velmi jednoduché. Ukážeme si program, který přikáže
+    robotovi, aby jel dopředu. Zároveň ale bude kontrolovat, zda-li před
+    robotem není žádná překážka. Pokud by měl robot narazit, tak jej zastaví a
+    skončí. Na tomto programu rozebereme jednotlivé příkazy:
+
+\begin{mylisting}
+\begin{pyc}
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""Go forward, stop in front of an obstacle."""
+
+import time
+
+from epuck import Controller
+
+# Input larger than the threshold means there is an obstacle.
+threshold = 300
+
+# Create the controller. Robot is connected to /dev/rfcomm2
+# and the communication will be asynchronous.
+controller = Controller('/dev/rfcomm2', asynchronous=True)
+
+# Set the speed of left and right wheel to 100.
+controller.set_speed(100, 100)
+
+# Ask for the values of proximity sensors
+sensor_request = controller.get_proximity_sensors()
+# Wait until the robot returns them.
+sensor_values = sensor_request.get_response()
+
+# Continue while there is nothing in front of the front left
+# and front right sensor.
+while (sensor_values['L10'] < threshold) \
+       and (sensor_values['R10'] < threshold):
+    # Wait for a while
+    time.sleep(0.1)
+    # Read new values
+    sensor_request = controller.get_proximity_sensors()
+    sensor_values = sensor_request.get_response()
+
+# Stop the robot
+controller.set_speed(0, 0)
+\end{pyc}
+\captionof{listing}{Jednoduchý asynchronní program pro ovládání robota}
+\label{lst:simple_example}
+\end{mylisting}
+
+\subsection{Vysvětlení zdrojového kódu}
+
+    Zdrojový kód \ref{lst:simple_example} tvoří celý program pro ovládání
+    robota. Rozebereme si jej tedy téměř řádek po řádku, abychom věděli, co
+    která část dělá. První věcí, kterou je třeba vždy učinit, je import
+    knihovny:
+
+    \begin{pyc*}{firstnumber=8}
+from epuck import Controller
+    \end{pyc*}
+
+    Nyní máme importovanou třídu {\tt Controller}, která slouží ke komunikaci s
+    robotem. Stačí už jen vytvořit samotné spojení:
+
+    \begin{pyc*}{firstnumber=15}
+controller = Controller('/dev/rfcomm2', asynchronous=True)
+    \end{pyc*}
+
+    Vytvoření spojení je jednoduché, první parametr je cesta k připojenému
+    robotovi (jak připojit robota je popsáno v kapitole
+    \ref{pripojeni_robota}). Druhý parametr je nepovinný a určuje, zda-li má
+    komunikace probíhat asynchronně. V tomto případě chceme asynchronní
+    komunikaci, pokud bychom druhý parametr vynechali, tak by komunikace byla
+    synchronní.
+
+    Nyní už můžeme zadávat příkazy:
+
+    \begin{pyc*}{firstnumber=18}
+controller.set_speed(100, 100)
+    \end{pyc*}
+
+    Zde nastavíme rychlost robota na 100 tiků za sekundu. V tomto případě nám
+    stačí pouze vykonat příkaz a nepotřebujeme získat odpověď od robota. V
+    případě změny rychlosti robot pouze pošle potvrzení, protože používáme
+    asynchronní komunikaci, toto potvrzení bude zpracováno automaticky.
+
+    Pokud ovšem chceme i odpověď, tak se příkaz skládá ze dvou kroků:
+
+    \begin{pyc*}{firstnumber=20}
+# Ask for the values of proximity sensors
+sensor_request = controller.get_proximity_sensors()
+# Wait until the robot returns them.
+sensor_values = sensor_request.get_response()
+    \end{pyc*}
+
+    Nejprve pošleme příkaz a uložíme si návratovou hodnotu. Ta reprezentuje
+    odpověď, která přijde na zaslaný příkaz. Druhým krokem pak je získání této
+    odpovědi.
+
+    Když už jsme získali nějaké data od robota, tak je můžeme zpracovat (v
+    tomto případě to jsou hodnoty z IR senzorů):
+
+    \begin{pyc*}{firstnumber=27}
+while (sensor_values['L10'] < threshold) \
+       and (sensor_values['R10'] < threshold):
+    \end{pyc*}
+
+    Kontrolujeme zde, zda-li  před robotem nic není. Bižší popis je v
+    dokumentaci metod. V případě, že před robotem nic není, můžeme program na
+    chvíli uspat, zatím se robot posune o kus dál a my můžeme znova
+    zkontrolovat senzory:
+
+    \begin{pyc*}{firstnumber=29}
+    # Wait for a while
+    time.sleep(0.1)
+    # Read new values
+    sensor_request = controller.get_proximity_sensors()
+    sensor_values = sensor_request.get_response()
+    \end{pyc*}
+
+    Vzhledem k tomu, že kontrola probíhá v nekonečné smyčce tak krátká pauza
+    slouží k nevytěžování procesoru PC na 100\%.
+
+    Pokud narazí robot na překážku, tak jediné, co mu zbývá před zastavením, je
+    zastavit motory:
+
+    \begin{pyc*}{firstnumber=36}
+    controller.set_speed(0, 0)
+    \end{pyc*}

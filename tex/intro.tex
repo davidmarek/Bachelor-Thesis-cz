@@ -1,0 +1,116 @@
+\chapter*{Úvod}
+\addcontentsline{toc}{chapter}{Úvod}
+
+Slovo robot pochází od českého spisovatele Karla Čapka, který jej poprvé
+použil ve své divadelní hře R.U.R. V češtině už po staletí existovalo slovo
+robota, které znamená nucenou práci. Roboti jsou nyní našimi neocenitelnými
+pomocníky, i když zatím nejčastěji ve formě průmyslových, anebo
+medicínských robotů, kteří provádějí delikátní práce s neuvěřitelnou
+přesností.
+
+Dnes už kdokoli, kdo má zájem o robotiku, může získat vlastního robota.
+Prodává se dokonce stavebnice Lego s řídící jednotkou a několika senzory,
+díky které si robota mohou postavit i děti. Pro ty, kdo by chtěli robota už
+hotového, existuje například e-puck robot. Jedná se o drobného robota,
+obsahujícího velkou škálu senzorů. Díky nim je ideální pro zkoušení
+rozličných experimentů (práce s kamerou, pohyb mezi překážkami atd.).
+
+Cílem této práce je vytvořit uživatelsky přívětivou a intuitivní knihovnu v
+programovacím jazyku Python, kterou budou moci použít studenti pro ovládání
+e-puck robota. Tato knihovna jim umožní ovládat všechny části robota z PC
+přes Bluetooth spojení z operačního systému Linux. Díky tomu budou moci
+využít výkonu svého počítače pro vytváření programů, které by nebylo možné
+uskutečnit v robotovi kvůli jeho výpočetním omezením.
+
+Většina knihoven pro ovládání robota umožňuje pouze synchronní komunikaci.
+Součástí této práce ovšem bude i možnost provádět příkazy asynchronně. Z
+toho důvodu je součástí práce i firmware robota, který umožní uživateli
+nejen využít asynchronní komunikaci, ale také zlepšení spolehlivosti
+přenosu. Dále bude provedeno několik úprav, které rozšíří možnosti ovládání
+robota (např. signalizace vybité baterie, anebo možnost získat hodnoty z
+mikrofonu).
+
+Práce by měla sloužit pro potřeby studentů zajímajících se o vývoj
+programů pro ovládání e-puck robota. Pro seznámení s knihovnou a možnostmi
+robota tedy bude součástí knihovny i několik ukázkových programů. Umožní
+čitateli napsat si svůj vlastní program velmi rychle, s využitím konstrukcí
+ukázaných v příkladech, anebo pouze inspirováním.
+
+Knihovna bude mít velmi jednoduché rozhraní, díky kterému bude možné
+ovládat robota bez složité inicializace, kupříkladu i interaktivně z
+interpretu Pythonu. Také bude možné knihovnu používat ve spolupráci s
+externími knihovnami. Výsledkem bude např. jednoduché vytváření grafických
+aplikací, anebo zpracování obrázků z kamery pomocí externích nástrojů.
+
+\section*{Přehled kapitol}
+
+\subsection*{Teoretická část}
+V první části práce jsou představeny podklady a teoretické informace
+vázající se k tématu. Po přečtení této části by měly být jasné všechny
+pojmy a čitatel by měl mít dostatečné informace o problematice programování
+robota pro napsání vlastního programu.
+
+V kapitole \ref{e-puck robot} je představen e-puck robot. Je zde popsán
+účel robota, okolnosti jeho vzniku a také všechny senzory a akční členy.
+Také se zde uživatel dozví jaké jsou možnosti programování robota.
+
+Při dálkovém ovládání robota je velmi důležitá komunikace mezi ním a
+počítačem, na kterém je spuštěn ovládací program. Kapitola \ref{sync/async}
+představuje rozdíly mezi komunikací synchronní a asynchronní. Vysvětluje
+jaké jsou výhody a nevýhody obou řešení a jak se s nimi e-puck knihovna
+vyrovnává.
+
+V kapitole \ref{existujici prace} čitatel zjistí, že tato práce není
+jediným pokusem o knihovnu pro ovládání robota. Bude představeno několik
+programů, které slouží k ovládání anebo simulaci robota. Také budou
+představeny knihy, které mohou sloužit pro rozšíření informací uvedených v
+této práci, anebo jako zdroj inspirace pro kontrolní programy.
+
+Nakonec bude představena specifikace knihovny (část \ref{specifikace}).
+Čitatel se dozví jakými problémy trpěl původní firmware a jaké jsou nutné
+změny, které bylo třeba vykonat. Dále jsou zde uvedena všechna vylepšení,
+díky kterým se knihovna snaží soupeřit s konkurencí.
+
+\subsection*{Praktická část}
+V druhé části práce bude představena implementace knihovny. Bude
+vysvětleno, jak byly použity mechanismy představené v teoretické části,
+díky kterým může být komunikace asynchronní. Také budou představeny
+přídavky ke standardním možnostem robota.
+
+V kapitole \ref{btcom} je představen firmware BTcom, jak funguje posílání
+příkazů robotovi a také zde jsou popsány všechny změny, které byly vykonány
+na firmware robota.
+
+Synchronní komunikace je předvedena v části \ref{btcom:sync} i s krátkou
+ukázkou jak zasílat příkazy.
+
+Asynchronní komunikace je druhým způsobem jak robotovi zasílat příkazy, je
+o poznání složitější než synchronní komunikace a tedy je jí věnováno více
+místa v části \ref{async-impl}. Čitatel se dozví co vše se děje na pozadí
+při posílání asynchronních zpráv.
+
+Jak funguje samotné ovládání robota je popsáno v části \ref{controller}.
+Ovládání se liší podle komunikace. Při synchronní je transparentní a
+jednoduché, při asynchronní je na druhou stranu spolehlivé, i když přináší
+do komunikace jednu vrstvu navíc.
+
+\subsection*{Příklady}
+
+V části \ref{dokumentace} je návod pro práci s e-puck robotem. Ten začíná u
+připojení robota k počítači a končí zasíláním příkazů. Také je zde uveden
+ukázkový program a následně rozebrán řádek po řádku.
+
+Následují příklady kontrolních programů v kapitole \ref{priklady}. Jde o
+příklad ovládání robota a vyhýbání se překážkám (Braitenberg vehicle v
+sekci \ref{braitenberg vehicle}), dále možnost změny programu pomocí
+přepínače na robotovi (příklad \ref{LED}) a nakonec využití kamery a
+externích knihoven pro detekci obličejů (příklad \ref{face detection}).
+
+\subsection*{Přílohy}
+
+Nakonec už následují jen přílohy. V příloze \ref{dokumentace api} čitatel
+nalezne popis všech metod, které slouží pro ovládání robota. Jedná se o
+popis všech příkazů, které je možné robotovi poslat.
+
+Na přiloženém CD jsou k nalezení všechny zdrojové kódy knihovny, společně s
+příklady a uživatelskou dokumentací.
