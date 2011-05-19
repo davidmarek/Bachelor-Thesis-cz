@@ -2,21 +2,25 @@
 \label{chap:teorie}
 
     V této části bych rád uvedl všechny základní součásti, na kterých má práce
-    stojí a také bych se rád zmínil o způsobech jak se řeší ovládání robota
-    jinde. Nejprve je nutné zjistit jaké vlastnosti má robot e-puck, abychom
-    pak dále mohli posoudit do jaké míry využíváme jeho předností a také
-    zhodnotit využitelnost práce v praxi. Popis e-puck robota je v sekci
-    \ref{e-puck robot}. Dále je potřeba zmínit jakými způsoby může probíhat
-    komunikace, jaká úskalí přináší oddělení kontrolního programu od hardware a
-    jak se dají mírnit rizika z tohoto plynoucí, tím se zabývá sekce
-    \ref{sync/async}.
+    stojí a také bych se rád zmínil o způsobech jak řeší ovládání robota jiní.
+    Nejprve je nutné zjistit jaké vlastnosti má robot e-puck, abychom pak dále
+    mohli posoudit do jaké míry využíváme jeho předností a také zhodnotit
+    využitelnost práce v praxi.
+
+    Popis e-puck robota je v sekci \ref{e-puck robot}. Dále je potřeba zmínit
+    jakými způsoby může probíhat komunikace, jaká úskalí přináší oddělení
+    kontrolního programu od hardware a jak se dají mírnit rizika z tohoto
+    plynoucí, tím se zabývá sekce \ref{sync/async}. V sekci \ref{existujici
+    prace} se podíváme na jiné projekty, které se zabývají ovládáním robota.
+    Nakonec v části \ref{specifikace} je k nalezení specifikace vytvořené
+    e-puck knihovny.
 
     \section{E-puck robot}
     \label{e-puck robot}
     E-puck je miniaturní robot vytvořený pro výukové účely na akademické
-    úrovni. Vytvořen byl v Ecole Polytechnique Fédérale de Laussanne. Celý
-    projekt je založen na konceptu otevřeného hardware, což znamená, že všechny
-    dokumenty a schémata jsou dostupná pod svobodnou licencí umožňující
+    úrovni. Vytvořen byl v EPFL (Ecole Polytechnique Fédérale de Laussanne).
+    Celý projekt je založen na konceptu otevřeného hardware, což znamená, že
+    všechny dokumenty a schémata jsou dostupná pod svobodnou licencí umožňující
     komukoli využívat e-puck robota na maximum a vyvíjet pro něj ať už
     software, anebo např. hardwarové nádstavby.
 
@@ -54,7 +58,7 @@
     flash paměti. Robot obsahuje následující sensory:
 
     \begin{itemize}
-        \item Infračervené sensory -- po obvodu robota je 8 IR sensorů. Měří
+        \item Infračervené (IR) sensory -- po obvodu robota je 8 IR sensorů. Měří
         buď vzdálenost od překážek, anebo intenzitu okolního světla. Jedná se o
         základní sensory využívané pro pohyb mezi překážkami.
 
@@ -89,7 +93,7 @@
 
         \item Přední dioda u kamery -- tato LED nevytváří rozptýlené světlo,
         ale paprsek, který je možné použít s kamerou pro odhadování vzdálenosti
-        k vzdálenějším překážkám.
+        k překážkám, když IR senzory nestačí.
     \end{itemize}
 
     Ovládání e-puck robota je možné řešit několika způsoby. V první řadě
@@ -131,15 +135,15 @@
 
     Při synchronní komunikaci program po odeslání zprávy pozastaví vykonávání
     dalších instrukcí a čeká dokud nedostane odpověď. Tento přístup je velmi
-    jednoduchý na implementaci (většinou se jedná o zavolání metody, která
-    neskončí, dokud neobdrží zprávu), není problém s nekonzistencí dat (než
-    bude program pokračovat v činnosti, obdrží všechny informace).
+    jednoduchý na implementaci (většinou se jedná o zavolání metody, která bude
+    čekat, dokud neobdrží zprávu), není problém s nekonzistencí dat (než bude
+    program pokračovat v činnosti, obdrží všechny informace).
 
     Překážkou pro synchronní komunikaci jsou ovšem ztráty zpráv při přenosu.
     Může dojít k chybě při přenosu dat a ke ztrátě odeslané zprávy, anebo
     příchozí odpovědi. Stejně tak se může stát, že adresát zprávy na ni nijak
     neodpověděl. V takovýchto případech lehce dojde k tzv. dead-locku, kdy bude
-    odesílatel čekat na zprávu, která nikdy nepřijde a tak nebude moci
+    odesílatel čekat na zprávu, která nikdy nepřijde, a tak nebude moci
     pokračovat v dalších výpočtech.
 
     Dochází také k mrhání procesorovým časem, čas strávený čekáním na odpověď
@@ -181,20 +185,20 @@
 
     V této práci je uživateli knihovny dána možnost vybrat si mezi komunikací
     synchronní a asynchronní. Synchronní komunikace je určena pro rychlé
-    prototypování a zkoušení ovládání robota. Uživatel bude zadávat příkazy a
-    dívat se, jak na ně robot reaguje. Tady je výhodná transparentnost
+    prototypování a interaktivní ovládání robota. Uživatel může zadávat příkazy
+    a dívat se, jak na ně robot reaguje. Tady je výhodná transparentnost
     synchronního přístupu. Naopak pro psaní kontrolních programů je větší důraz
     kladen na spolehlivost. Knihovna zajistí, že příkaz opravdu dojde, v
     nejhorším případě upozorní uživatele na skutečnost, že robot je
     neovladatelný (může se stát třeba pokud mu dochází baterie).
 
-    Máme zde tu výhodu, že e-puck robot vždy pracuje synchronně. Na začátku
-    čeká, dokud mu nedojde příkaz, pak se pustí do jeho zpracování. V tu chvíli
-    ovšem přestává poslouchat Bluetooth spojení a tedy každý další zaslaný
-    příkaz bude ztracen. Po zpracování příkazu robot pošle odpověď a opět začne
-    čekat na příkazy z počítače. Tedy vždy platí, že robot buď zpracuje zprávy
-    v takovém pořadí v jakém byly poslány, anebo případně některé z nich
-    vynechá.
+    Výhodou je, že firmware v e-pucku robotovi je z důvodu hardwarových omezení
+    napsán synchronně. Na začátku je vždy zavolána funkce pro čtení z Bluetooth
+    spojení, zablokuje vykonávání dalších instrukcí a čeká, dokud nedojde
+    příkaz, který by se mohl zpracovat. Po provedení příkazu robot pošle
+    odpověď a opět začne čekat na příkazy z počítače. Tedy vždy platí, že robot
+    buď zpracuje zprávy v takovém pořadí v jakém byly poslány, anebo případně
+    některé z nich vynechá.
 
     Při asynchronní komunikaci tedy stačí mít frontu příkazů a kontrolovat, že
     je robot postupně vykonává. To je také důvod proč jsou zprávy opatřeny
@@ -205,17 +209,17 @@
     nejsou unikátní. Ovšem mezi dvěma zprávami, které potenciálně mohou mít
     stejný kód i stejné pořadové číslo, musí být posláno tolik jiných zpráv, že
     pravděpodobnost záměny těchto dvou je velmi malá (musely by se ztratit
-    všechny zprávy mezi nimi a v takovém případě je komunikace velmi
+    všechny zprávy mezi nimi a v takovém případě už je komunikace opravdu velmi
     nestabilní).
 
     Díky přidaným informacím ke zprávě není problém poslat např. více zpráv,
-    které mění rychlost robota. Je zajištěno, že budou provedeny všechny
-    příkazy postupně a robot skončí v očekávaném stavu. Ukázkovou situací může
-    být robot, který stojí před překážkou, chceme aby se otočil a pokračoval v
-    jízdě dopředu. Pokud by se ztratil první příkaz, tak robot pojede dále
-    proti překážce, pokud by se ztratil druhý příkaz, tak se bude robot pouze
-    točit na místě. Díky danému pořadí příkazů se nemusíme takovýchto situací
-    bát.
+    které mění rychlost robota, za sebou. Je zajištěno, že budou provedeny
+    všechny příkazy postupně a robot skončí v očekávaném stavu. Ukázkovou
+    situací může být robot, který stojí před překážkou, chceme aby se otočil a
+    pokračoval v jízdě dopředu. Pokud by se ztratil první příkaz, tak robot
+    pojede dále proti překážce, pokud by se ztratil druhý příkaz, tak se bude
+    robot pouze točit na místě. Díky danému pořadí příkazů se nemusíme
+    takovýchto situací bát.
 
     \section{Existující práce}
     \label{existujici prace}
@@ -253,7 +257,7 @@
         kompilace programu a nahrání do robota. Ta funguje pouze pokud je
         program napsán v jazyku C.
 
-        Druhé zajímavější řešení je použít dálkové ovládání pomocí
+        Druhé, zajímavější, řešení je použít dálkové ovládání pomocí
         Bluetooth. Zde už mohou být programy napsány v libovolném podporovaném
         jazyce. Do robota je třeba nahrát upravený firmware. Zde ovšem nemohu
         porovnávat, protože Webots šíří firmware pouze v binární podobě, nejsou
@@ -262,14 +266,14 @@
 
         Tím se dostáváme k hlavní nevýhodě Webots. Jedná se o komerční projekt,
         dostupná zdarma je pouze testovací časově omezená verze a nejsou
-        dostupné zdrojové kódy (právě např. firmware).
+        dostupné zdrojové kódy (právě např. firmwaru).
 
         \subsection{Cyberbotics' Robot Curriculum}
         \label{curriculum}
 
         Pokud jsme se bavili o Webots, tak stojí za zmínku také kniha
         Cyberbotics' Robot Curriculum \cite{cyberbotics}. Autorem je Olivier
-        Michal, dále byla rozšířena na EPFL, nyní je dostupná na
+        Michel, dále byla rozšířena na EPFL, nyní je dostupná na
         Wikibooks \cite{wikibooks}. Kniha je určena všem, kteří mají zájem o
         robotiku. Skládá se ze dvou částí, v první pojednává o teoretických
         základech (umělá inteligence, robotika, e-puck robot), ve druhé už se
@@ -294,7 +298,7 @@
 
         Jedná se o další knihu, která se vztahuje k programování robotů.
         Learning Computing With Robots \cite{learning} ovšem není psána o e-puck
-        robotovi, ale o jednoduchém robotovi Scribbler. Kniha se spíše zabývá
+        robotovi, ale o jednoduchém robotovi Scribbler \cite{scribbler}. Kniha se spíše zabývá
         výukou programování v programovacím jazyku Python a robota používá pro
         ukázku zajímavých příkladů.
 
@@ -305,7 +309,7 @@
         \label{evorobot*}
 
         Evorobot* \cite{evorobot} je software vyvinutý pro provádění
-        experimentů na evoluci kolektivního chování a komunikace, založen na
+        experimentů na evoluci kolektivního chování a komunikace, založený na
         e-puck robotovi. Skládá se z několika částí:
 
         \begin{itemize}
@@ -320,7 +324,7 @@
         Evorobot* tedy slouží k vytváření neuronové sítě pro ovládání robota,
         její vyvíjení v simulovaném prostředí a následnou adaptaci a testování
         na skutečném hardware. Součástí programu je několik experimentů
-        ukazujících možnosti vývoje ovládání robota.
+        ukazujících možnosti evolučního vývoje ovládání robota.
 
         \subsection{Pyro}
         \label{pyro}
@@ -339,18 +343,19 @@
 
         Simulátor funguje jako server a zpracovává celý experiment. Na výběr je
         několik simulátorů, od jednoduchého 2D, přes 3D prostředí se simulací
-        fyziky, až po simulaci soutěže RoboCup. Simulátory mohou být také
-        diskrétní, je tedy možné simulovat i problémy zapadající spíše do umělé
-        inteligence. Pyro například obsahuje simulaci světa Wumpus \cite{aima}.
+        fyziky, až po simulaci soutěže RoboCup \cite{robocup}. Simulátory mohou
+        být také diskrétní, je tedy možné simulovat i problémy zapadající spíše
+        do oblasti umělé inteligence. Pyro například obsahuje simulaci světa
+        Wumpus \cite{aima}.
 
         Další součástí je simulace robota, pyro podporuje několik
         rodin robotů:
 
         \begin{itemize}
-            \item Pioneer -- Pioneer, Pioneer2, PeopleBot robots,
-            \item Khepera -- Khepera, Khepera 2 a Hemisson robots,
-            \item AIBO a
-            \item Roomba.
+            \item Pioneer \cite{pioneer} -- Pioneer, Pioneer2, PeopleBot robots,
+            \item Khepera \cite{khepera} -- Khepera, Khepera 2 a Hemisson robots,
+            \item AIBO \cite{aibo} a
+            \item Roomba \cite{roomba}.
         \end{itemize}
 
         Nakonec nejdůležitější součástí je samotný mozek robota, jedná se o
@@ -363,8 +368,9 @@
     \section{Specifikace e-puck knihovny}
     \label{specifikace}
 
-    Účelem této práce je být výukovým materiálem, tedy je občas kladen důraz na
-    vlastnosti, které by v jiné situaci byly opomíjeny.
+    Cílem této práce je poskytnout knihovnu, která bude dostatečně jednoduchá
+    na používání, aby mohla být využita pro výuku ovládání robota. S tím se
+    pojí několik dalších vlastností, které zjednodušují proces učení.
 
     První důležitou vlastností je otevřenost zdrojových kódů. Uživatel je
     povzbuzován, aby do nich nahlédl. Jsou důkladně okomentovány a měly by
@@ -398,7 +404,7 @@
     pokud robot pracuje v binárním režimu, tak posílá pouze data, bez
     jakéhokoli označení příslušnosti k příkazu, nebo informace o povaze dat.
     Proto bylo provedeno několik úprav, v původním stavu se totiž jednalo o
-    téměř neřešitelný problém, rozpoznat ke kterému příkazu data přísluší.
+    téměř neřešitelný problém rozpoznat, ke kterému příkazu data přísluší.
 
     Upravený firmware obsahuje několik mechanismů pro zabezpečení spolehlivé
     komunikace. V kapitole \ref{btcom:prikazy} je popsáno jak bylo potřeba
@@ -406,10 +412,10 @@
     přibylo pořadové číslo.
 
     V části \ref{btcom:upravy} jsou popsány další změny firmware. Binární
-    příkazy v odpovědi posílají celou hlavičku obsahující kód příkazu, pořadové
-    číslo a velikost přenášených dat. Dále firmware získal možnost upozornit na
-    nízký stav baterie. Možná se způsob, jakým je toto upozornění provedeno,
-    zdá podivný, protože rozsvícení LED začne baterii vybíjet ještě víc, ovšem
-    ve chvíli kdy dojde k upozornění už je baterie vybitá tak, že komunikace s
-    robotem je velmi problémová a složitější příkazy už stejně není schopen
-    vykonat.
+    příkazy v odpovědi posílají nejprve hlavičku obsahující kód příkazu,
+    pořadové číslo a velikost přenášených dat. Dále firmware získal možnost
+    upozornit na nízký stav baterie rozsvícením LED. Možná se způsob, jakým je
+    toto upozornění provedeno zdá podivný, protože rozsvícení diod začne
+    baterii vybíjet ještě víc, ovšem ve chvíli, kdy dojde k upozornění, už je
+    baterie vybitá tak, že komunikace s robotem je velmi problémová a
+    složitější příkazy už stejně není schopen vykonat.

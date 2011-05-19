@@ -4,7 +4,7 @@
 Slovo robot pochází od českého spisovatele Karla Čapka, který jej poprvé
 použil ve své divadelní hře R.U.R. V češtině už po staletí existovalo slovo
 robota, které znamená nucenou práci. Roboti jsou nyní našimi neocenitelnými
-pomocníky, zatím nejčastěji ve formě průmyslových, anebo medicínských robotů,
+pomocníky, zatím nejčastěji ve formě průmyslových nebo medicínských robotů,
 kteří provádějí delikátní práce s neuvěřitelnou přesností.
 
 Dnes už kdokoli, kdo má zájem o robotiku, může získat vlastního robota.
@@ -15,30 +15,22 @@ robota, obsahujícího velkou škálu senzorů. Díky nim je ideální pro zkou�
 rozličných experimentů (práce s kamerou, pohyb mezi překážkami atd.).
 
 Cílem této práce je vytvořit uživatelsky přívětivou a intuitivní knihovnu v
-programovacím jazyku Python, kterou budou moci použít studenti pro ovládání
-e-puck robota. Tato knihovna jim umožní ovládat všechny části robota z PC
-přes Bluetooth spojení z operačního systému Linux. Díky tomu budou moci
-využít výkonu svého počítače pro vytváření programů, které by nebylo možné
-uskutečnit v robotovi kvůli jeho výpočetním omezením.
+programovacím jazyku Python pro ovládání e-puck robota. Bude umožňovat ovládání
+všech částí robota z PC přes Bluetooth spojení z operačního systému Linux. Díky
+tomu budou moci využít výkonu svého počítače pro vytváření programů, které by
+nebylo možné uskutečnit v robotovi kvůli jeho výpočetním omezením. Ovládací
+program v PC také umožňuje používat externích knihoven.
 
-Většina knihoven pro ovládání robota umožňuje pouze synchronní komunikaci.
-Součástí této práce ovšem bude i možnost provádět příkazy asynchronně. Z
-toho důvodu je součástí práce i firmware robota, který umožní uživateli
-nejen využít asynchronní komunikaci, ale také napomůže zlepšení spolehlivosti
-přenosu. Dále bude provedeno několik úprav, které rozšíří možnosti ovládání
-robota (např. signalizace vybité baterie, anebo možnost získat hodnoty z
-mikrofonů).
+Součástí práce bude i firmware BTcomDM, upravená verze oficiálního firmwaru
+BTcom. Díky němu bude možné používat asynchronní komunikaci a také bude
+obsahovat mechanismy pro zajištění robustní komunikace. Také bude obsahovat
+několik úprav co se týče funkčnosti (signalizace nízkého stavu baterie anebo
+získání hodnot z mikrofonů).
 
 Práce by měla sloužit pro potřeby studentů zajímajících se o programování
 e-puck robota. Pro seznámení s knihovnou a možnostmi robota tedy bude součástí
 knihovny i několik ukázkových programů. Jejich účelem je ukázat jakým způsobem
 je možné robota ovládat a co vše dokáže.
-
-Knihovna bude mít velmi jednoduché rozhraní, díky kterému bude možné
-ovládat robota bez složité inicializace, kupříkladu i interaktivně z
-interpretu Pythonu. Také bude možné knihovnu používat ve spolupráci s
-externími knihovnami. Výsledkem bude např. jednoduché vytváření grafických
-aplikací, anebo zpracování obrázků z kamery pomocí externích nástrojů.
 
 \section*{Přehled kapitol}
 
@@ -104,11 +96,3 @@ sekci \ref{braitenberg vehicle}), dále možnost změny programu pomocí
 přepínače na robotovi (příklad \ref{LED}) a nakonec využití kamery a
 externích knihoven pro detekci obličejů (příklad \ref{face detection}).
 
-\subsection*{Přílohy}
-
-Nakonec už následují jen přílohy. V příloze \ref{dokumentace api} čitatel
-nalezne popis všech metod, které slouží pro ovládání robota. Jedná se o
-popis všech příkazů, které je možné robotovi poslat.
-
-Na přiloženém CD jsou k nalezení všechny zdrojové kódy knihovny, společně s
-příklady a uživatelskou dokumentací.
