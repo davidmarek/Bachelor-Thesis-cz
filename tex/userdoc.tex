@@ -82,6 +82,21 @@
     }
     \end{itemize}
 
+    \subsection{Nahrání firmware BTcomDM}
+
+    Knihovna komunikuje s E-puck robotem pomocí posílání textových příkazů. Je
+    třeba do robota nahrát firmware BTcomDM. Ten je dodáván s knihovnou.
+    K jeho nahrání slouží skript \code{epuckupload} \cite{epuckupload}. Stačí
+    se řídit pomocí \code{README} a do robota nahrát soubor \code{BTcom.hex}.
+    Příklad použití:
+
+    \begin{verbatim}
+    $ epuckupload -f BTcom.hex rfcomm0
+    \end{verbatim}
+
+    Po spuštění příkazu je třeba robota restartovat (modré tlačítko na horní
+    straně). Teprve pak se začne nahrávat nový firmware.
+
 \section{Ukázkový program}
 \label{ukazkovy_program}
 
