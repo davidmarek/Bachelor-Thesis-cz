@@ -14,7 +14,7 @@
     Implementace asynchronní komunikace je představena v sekci
     \ref{async-impl}. Jedná se o představení mechanismů, díky kterým je možné
     provádět komunikaci asynchronně. K asynchronní komunikaci také patří
-    zpracování odpovědi a znovuodeslání ztracených příkazů.
+    zpracování odpovědi a znovu-odeslání ztracených příkazů.
 
     Nakonec je představena pro uživatele ta nejzajímavější část a to rozhraní
     pro komunikaci s robotem (sekce \ref{controller}). Jedná se o most mezi
@@ -55,11 +55,11 @@
     písmeno je tzv. timestamp, jedná se právě o kontrolní znak, který určuje
     pořadí příkazů a odlišuje příkazy stejného typu. Dále následují dvě čísla,
     první určuje rychlost levého kola, druhé rychlost pravého kola. Nakonec je
-    znak řádku, který určuje konec příkazu.
+    znak konce řádku, který určuje konec příkazu.
 
     Binární příkazy se také rozlišují písmenem, avšak aby bylo rozpoznání
     zjednodušeno (přesněji řečeno, aby stačilo jedno porovnání), tak kód pro
-    binární příkazy je záporný. Firmware přečte kód příkazu jako 8--bitové
+    binární příkazy je záporný. Firmware přečte kód příkazu jako 8-bitové
     číslo se znaménkem. Pokud je záporné, tak automaticky předpokládá, že vše
     co následuje je binární příkaz. Protože data v příkazu nejsou nijak
     kódována, tak není např. možné předpokládat, že se v příkazu neobjeví číslo
@@ -82,7 +82,7 @@
     pořadí příkazu v sérii. Ve své odpovědi pak robot uvede jak kód označující
     typ příkazu, na který odpovídá, tak také došlý otisk. Díky tomu je možné
     téměř jednoznačně (otisk se samozřejmě opakuje po určité době znova) svázat
-    odpoveď se zaslaným příkazem. Pokud tedy nějaké číslo chybí v posloupnosti
+    odpověď se zaslaným příkazem. Pokud tedy nějaké číslo chybí v posloupnosti
     přijatých odpovědí, je jasné, že tato odpověď nedorazila.
 
     Odpovědi na binární příkazy nyní vždy obsahují hlavičku, která je pro
@@ -91,16 +91,16 @@
     Při binární komunikaci totiž není možné rozpoznat konec přenosu dat. V
     původní verzi firmware se počítalo s tím, že po každém odeslaném příkazu
     bude uživatel čekat na jeho odpověď a tedy bude vědět jakého formátu jsou
-    data, která očekává. Pokud se ovšem snažíme o asynchronní komunikaci, tak
-    bychom neměli o příchozích datech nic předpokládat.
+    data, která očekává. Při asynchronní komunikaci bychom neměli o příchozích
+    datech nic předpokládat. Pokud známe jejich velikost, můžeme je nejprve
+    načíst a až pak hledat příkaz, kterému patří.
 
     Do firmware byly také přidány nové příkazy. Robot obsahuje 3 mikrofony, ale
     není jednoduché nasnímaná data odeslat do PC kvůli jejich velikosti. Pro
     programy, které jsou spouštěny přímo v robotovi, ovšem existuje knihovna
-    pro FFT (rychlou Fourierovu transformaci). Ta byla byla přidána do BTcom
-    firmwaru a díky ní je možné jedním příkazem zapnout snímání dat z mikrofonu
-    a druhým příkazem na nasnímaných datech provést transformaci a odeslat je
-    do PC.
+    umožňující provádění FFT (rychlé Fourierovy transformace). Ta byla přidána
+    do BTcomDM firmwaru a díky ní je možné jedním příkazem zapnout snímání dat
+    z mikrofonu, na nasnímaných datech provést transformaci a odeslat je do PC.
 
     Dalším problémem, se kterým se musí uživatel e-puck robota potýkat, je
     kapacita baterie a nepřítomnost jakéhokoli ukazatele jejího stavu. Tento
@@ -114,25 +114,28 @@
     \label{btcom:sync}
 
     Hlavním cílem synchronní komunikace je umožnit uživateli knihovny
-    jednoduché zasílání příkazů, u kterého není kladen důraz na ošetření
-    výjimek. Počítá se s tím, že uživatel bude využívat synchronní komunikaci
-    pro experimentování s robotem a prototypování příkazů.
+    jednoduché zasílání příkazů, u kterého není kladen důraz na ošetřování chyb
+    spojení. Počítá se s tím, že uživatel bude využívat synchronní komunikaci
+    pro experimentování s robotem a interaktivní ovládání.
 
     Hlavní výhodou synchronní komunikace je její jednoduchost. Jak lze vidět
     ve zdrojovém kódu \ref{lst:sync_example}, příkaz lze předat robotovi
     zavoláním pouze jedné metody, která navíc i vrátí odpověď od robota. V
-    tomto případě se jedná o rychlost motorů. Díky tomu lze robota ovládat i z
-    interpretu Pythonu, čímž se výrazně zkrátí doba potřebná pro testování
-    nových nápadů. Tam kde je normálně potřeba napsat zdrojový kód, zkompilovat
-    aplikaci a následně ji pustit, tady stačí pouze pustit Python, importovat
-    knihovnu, vytvořit spojení (což jsou 2 řádky kódu) a pak už nám nic nebrání
-    v posílání příkazů.
+    tomto případě se jedná o získání rychlosti motorů. Díky tomu lze robota
+    ovládat i z interpretu Pythonu, čímž se výrazně zkrátí doba potřebná pro
+    testování nových nápadů. Tam, kde je normálně potřeba napsat zdrojový kód,
+    zkompilovat aplikaci a následně ji pustit, tady stačí pouze pustit Python,
+    importovat knihovnu, vytvořit spojení (což jsou 2 řádky kódu) a pak už nám
+    nic nebrání v posílání příkazů.
 
     Každé zavolání příkazu odešle robotovi zprávu (bližší popis zprávy v části
     \ref{btcom:prikazy}) a následně zablokuje (zavoláním metody {\tt read} na
-    sériové spojení) další vykonávání příkazů, dokud neobdrží odpověď.
+    sériové spojení) další vykonávání příkazů, dokud neobdrží odpověď. Uživatel
+    si tedy musí sám dávat pozor, zda-li se mu nějaký příkaz neztratil. Na
+    druhou stranu hlavní výhodou synchronní komunikace je, že uživatel v každé
+    chvíli přesně ví, co se děje.
 
-    \begin{listing}[h]
+    \begin{listing}[H]
     \begin{pyc}
 >>> from epuck import Controller
 >>> controller = Controller('/dev/rfcomm0')
@@ -151,7 +154,7 @@
     spolehlivou komunikaci. Krátká ukázka asynchronní komunikace je ve
     zdrojovém kódu \ref{lst:async_example}.
 
-    \begin{listing}[h]
+    \begin{listing}[H]
     \begin{pyc}
 >>> from epuck import Controller
 >>> controller = Controller('/dev/rfcomm0', asynchronous=True)
@@ -163,47 +166,15 @@
     \label{lst:async_example}
     \end{listing}
 
-    Základním požadavkem asynchronní komunikace je oddělení zavolání příkazu od
+    Základním požadavkem asynchronní komunikace je oddělení volání příkazu od
     jeho provedení. Provedení totiž může trvat delší dobu a to se může ukázat v
     některých aplikacích jako klíčový problém. Příkazy tedy nečekají na
     odpověď, ovšem jak se pak uživatel dostane k odpovědi? Zavolání příkazu
     nemůže vrátit odpověď, ale na druhou stranu může vrátit uživateli odkaz na
-    potenciální odpověď. Toho se pak může dotázat, zda-li odpověď přišla a
-    nakonec ji také i získat. Ukázka je ve zdrojovém kódu
-    \ref{lst:async_example}. Pro vysvětlení jak tento odkaz funguje bude
+    na objekt s potenciální odpověďí. Díky tomu se pak může tázat, zda-li
+    odpověď přišla a nakonec ji také i získat. Ukázka je ve zdrojovém kódu
+    \ref{lst:oddeleni}. Pro vysvětlení jak tento odkaz funguje bude
     potřeba osvětlit vnitřnosti asynchronní komunikace.
-
-    Asynchronní komunikace už od připojení robota probíhá v samostatném vláknu,
-    které je nezávislé od vlákna, ve kterém běží program uživatele. Toto
-    komunikační vlákno zastává tři funkce:
-
-    \begin{enumerate}
-        \item Odesílání příkazů
-        \item Zpracování příchozí komunikace
-        \item Kontrola chyb
-    \end{enumerate}
-
-    Příchozí komunikace je získávána pomocí sériového připojení vytvořeného
-    knihovnou pySerial. Připojení podporuje standardní metody pro práci se
-    sockety a je tedy možné používat funkci select operačního systému, která
-    dokáže kontrolovat více připojení a oznámit přijetí dat na libovolném z
-    nich. První připojení, které je kontrolováno, tedy je sériové připojení s
-    robotem. Další spojení slouží k získávání nových příkazů.
-
-    \subsection{Odeslání příkazu}
-
-    Při odesílání příkazů se vlastně jedná o přenesení informace v reálném čase
-    z jednoho vlákna do druhého. Příkaz je zavolán ve vláknu s uživatelským
-    programem, ovšem samotná zpráva robotovi musí být odeslána z vlákna
-    asynchronní komunikace. V opačném případě by uživatelský program byl
-    zpomalen přenosem k robotovi, navíc asynchronní vlákno má větší přehled o
-    spojení s robotem a tedy např. nedojde ke kolizi mezi posíláním a
-    přijímáním dat.
-
-    V uživatelském vláknu je příkaz zařazen do fronty pro odchozí příkazy,
-    asynchronní vlákno je pak následovně informováno o novém příkazu, nakonec
-    je vytvořen odkaz na příkaz, který je vrácen uživateli. Žádný z těchto
-    příkazů není blokující, tedy odeslání příkazu nestojí uživatele téměř nic.
 
     \begin{listing}[H]
     \begin{pyc}
@@ -217,9 +188,42 @@ while not request.response_received():
 value = request.get_response()
     \end{pyc}
     \caption{Ukázka oddělení zaslání příkazu a vyzvednutí odpovědi}
+    \label{lst:oddeleni}
     \end{listing}
 
-    Zbytek odeslání příkazu už probíhá v asynchronním vláknu. Funkce select je
+    Asynchronní komunikace už od připojení robota probíhá v samostatném vláknu,
+    které je nezávislé od vlákna, ve kterém běží program uživatele. Toto
+    komunikační vlákno zastává tři funkce:
+
+    \begin{enumerate}
+        \item Odesílání příkazů,
+        \item zpracování příchozí komunikace a
+        \item kontrola chyb.
+    \end{enumerate}
+
+    Příchozí komunikace je získávána pomocí sériového připojení vytvořeného
+    knihovnou pySerial \cite{pyserial}. Připojení podporuje standardní metody
+    pro práci se sokety a je tedy možné používat funkci select operačního
+    systému, která dokáže kontrolovat více připojení a oznámit přijetí dat na
+    libovolném z nich. První připojení, které je kontrolováno, tedy je sériové
+    připojení s robotem. Další spojení slouží k získávání nových příkazů.
+
+    \subsection{Odeslání příkazu}
+
+    Při odesílání je příkaz zavolán ve vláknu s uživatelským programem, ovšem
+    samotná zpráva robotovi musí být odeslána z vlákna asynchronní komunikace.
+    V opačném případě by uživatelský program byl zpomalen přenosem k robotovi,
+    navíc asynchronní vlákno má větší přehled o spojení s robotem a tedy např.
+    nedojde ke kolizi mezi posíláním a přijímáním dat. Je tedy nutné předat
+    informaci o novém příkazu mezi vlákny.
+
+    V uživatelském vláknu je příkaz zařazen do fronty pro odchozí příkazy,
+    asynchronní vlákno je pak následovně informováno o novém příkazu, nakonec
+    je vytvořen odkaz na příkaz, který je vrácen uživateli. Žádná z těchto
+    instrukcí není blokující, tedy odeslání příkazu nestojí uživatele téměř
+    nic.
+
+    Dokončení odesílání už probíhá v asynchronním vláknu. Funkce select je
     přerušena informací o novém příkazu. Následně je příkaz odebrán z fronty,
     odeslán robotovi a zařazen do fronty odeslaných zpráv. Zde čeká na příchozí
     odpověď. Uživatel stále vlastní odkaz na tento příkaz, i když se přesunul.
@@ -227,12 +231,12 @@ value = request.get_response()
     \subsection{Zpracování odpovědi}
 
     Pokud se robot rozhodne odeslat odpověď na příkaz, tak se to asynchronní
-    vlákno dozví díky funkci select, která označí spojení, které je připraveno
-    pro čtení. Následuje tedy přečtení a zpracování odpovědi. Nejprve je
-    potřeba rozhodnout, zda-li se jedná o binární nebo textovou odpověď. Na to
-    stačí přečíst první znak, ten určuje na který příkaz robot odpovídá. Další
-    znak určí timestamp, díky němu už je možné jednoznačně najít příkaz ve
-    frontě odeslaných, kterému odpověď patří.
+    vlákno dozví díky funkci select, která označí spojení, připravené pro čtení.
+    Následuje tedy přečtení a zpracování odpovědi. Nejprve je potřeba
+    rozhodnout, zda-li se jedná o binární nebo textovou odpověď. Na to stačí
+    přečíst první znak, ten určuje, na který příkaz robot odpovídá. Další znak
+    určí timestamp, díky němu už je možné jednoznačně najít příkaz, kterému
+    odpověď patří, ve frontě odeslaných.
 
     Odpověď pak už je pouze předána příkazu, který si ji uloží. Příkaz je
     následně odebrán z fronty odeslaných příkazů. Pokud si uživatel uložil
@@ -244,7 +248,7 @@ value = request.get_response()
     robota něco přišlo, nepřirozená. Lepší možnost je říct knihovně co se má
     vykonat po přijetí odpovědi a nechat ji ať se o vše postará sama. Z tohoto
     důvodu má každý příkaz navíc parametr callback, přes který se může knihovně
-    předat funkce, která bude spuštěna pro přijetí odpovědi. Ukázka je ve
+    předat funkce, která bude spuštěna po přijetí odpovědi. Ukázka je ve
     zdrojovém kódu \ref{lst:callback}.
 
     \begin{listing}
@@ -261,8 +265,8 @@ value = request.get_response()
 
     Při psaní callback funkcí je důležité pamatovat na to, že knihovna volá
     tyto metody ve stejném vlákně, v jakém provádí vše ostatní. Proto by
-    callback funkce neměla být výpočtově náročná. Složitější operace by si měly
-    vytvořit vlastní vlákno.
+    callback funkce neměla být výpočtově náročná. Popřípadě by si měla pro
+    složitější výpočty vytvořit vlastní vlákno.
 
     \subsection{Časový limit}
 
@@ -270,10 +274,36 @@ value = request.get_response()
     rozpoznává. Robotovi zabírá vykonání příkazu delší dobu, anebo o příkazu
     vůbec neví? Kdy už se má příkaz považovat za ztracený? Pro vyřešení těchto
     problémů slouží časový limit. Pro každý příkaz má robot přidělen časový
-    limit v kterém musí odpovědět. Časový limit je vždy dán funkci select,
-    která vlákno zablokuje právě na tuto dobu. Následně dojde ke kontrole
-    příkazů. Každý příkaz, který už je ve frontě příliš dlouho, je označen za
-    ztracený a poslán znova.
+    limit, v kterém musí odpovědět. Časový limit je vždy dán funkci select,
+    která vlákno zablokuje právě na tuto dobu. Po uplynutí dojde ke kontrole
+    stáří příkazů. Každý příkaz, který už je ve frontě příliš dlouho, je
+    označen za ztracený a poslán znova. Je omezen počet pokusů o zaslání
+    příkazu, po jejich vyčerpání je uživateli oznámena chyba (vyhozena
+    výjimka). Robot je v takovém případě nejspíše neovladatelný.
+
+    Časový limit je jednotný pro všechny příkazy a nastavuje se při vytváření
+    instance objektu \code{Controller} (příklad ve zdrojovém kódu
+    \ref{lst:timeout}). Je možné nastavit dva parametry:
+
+    \begin{itemize}
+        \item timeout -- časový limit v sekundách (je možné zadat i desetinné číslo),
+        \item max\_tries -- maximální počet pokusů o zaslání příkazu před
+        oznámením chyby uživateli.
+    \end{itemize}
+
+    Pokud uživatel tyto hodnoty nezmění, tak v základním nastavení je časový
+    limit pro každý příkaz půl sekundy a je povoleno až 10 opakování.
+
+    \begin{listing}
+        \begin{pyc}
+c = Controller('/dev/rfcomm0',
+               asynchronous=True,
+               timeout=0.5,
+               max_tries=5)
+        \end{pyc}
+        \caption{Nastavení časového limitu a maximálního počtu pokusů}
+        \label{lst:timeout}
+    \end{listing}
 
     \section{Ovládání robota}
     \label{controller}
@@ -356,7 +386,7 @@ while True:
     ihned volat další příkaz. To s sebou nese jedno riziko, pokud budeme
     posílat nové příkazy rychleji, než je stíhá robot vykonávat, tak nám může
     přetéct fronta příkazů, která není nekonečná. Každé zavolání příkazu, který
-    potřebuje načíst data nám tuto frontu vyprázdní, protože se vždy musejí
+    potřebuje načíst data, nám tuto frontu vyprázdní, protože se vždy musejí
     provést všechny předchozí příkazy a teprve pak je možné získat data, ale i
     tak je dobrým zvykem omezit maximální rychlost smyčky programu krátkou
     pauzou.

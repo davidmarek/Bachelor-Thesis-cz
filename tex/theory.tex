@@ -2,10 +2,10 @@
 \label{chap:teorie}
 
     V této části bych rád uvedl všechny základní součásti, na kterých má práce
-    stojí a také bych se rád zmínil o způsobech jak řeší ovládání robota jiní.
-    Nejprve je nutné zjistit jaké vlastnosti má robot e-puck, abychom pak dále
-    mohli posoudit do jaké míry využíváme jeho předností a také zhodnotit
-    využitelnost práce v praxi.
+    stojí, a také bych se rád zmínil o způsobech, jak řeší ovládání robota
+    jiní. Nejprve je nutné zjistit, jaké vlastnosti má robot e-puck, abychom
+    pak dále mohli posoudit do jaké míry využíváme jeho předností a také
+    zhodnotit využitelnost práce v praxi.
 
     Popis e-puck robota je v sekci \ref{e-puck robot}. Dále je potřeba zmínit
     jakými způsoby může probíhat komunikace, jaká úskalí přináší oddělení
@@ -18,11 +18,11 @@
     \section{E-puck robot}
     \label{e-puck robot}
     E-puck je miniaturní robot vytvořený pro výukové účely na akademické
-    úrovni. Vytvořen byl v EPFL (Ecole Polytechnique Fédérale de Laussanne).
-    Celý projekt je založen na konceptu otevřeného hardware, což znamená, že
-    všechny dokumenty a schémata jsou dostupná pod svobodnou licencí umožňující
-    komukoli využívat e-puck robota na maximum a vyvíjet pro něj ať už
-    software, anebo např. hardwarové nádstavby.
+    úrovni. Vytvořen byl v EPFL (Ecole Polytechnique Fédérale de Laussanne) v
+    roce 2004. Celý projekt je založen na konceptu otevřeného hardware, což
+    znamená, že všechny dokumenty a schémata jsou dostupná pod svobodnou
+    licencí umožňující komukoli využívat e-puck robota na maximum a vyvíjet pro
+    něj ať už software, anebo např. hardwarové nadstavby.
 
     \begin{listing}
         \begin{center}
@@ -41,7 +41,7 @@
         \item Široké spektrum použití -- robota je možné použít nejen pro výuku
         robotiky, ale také například pro výuku zpracování obrazu nebo zvuku,
         programování vestavěných systémů, automatizace atd. Toho je docíleno
-        velkým spektrem sensorů.
+        velkým spektrem senzorů.
 
         \item Uživatelská přívětivost -- při vytváření rozhraní by vždy měl být
         kladen důraz na jednoduchost. Rozhraní by mělo být intuitivní a
@@ -52,23 +52,24 @@
         komunikovat s počítačem.
     \end{itemize}
 
-    Součástí robota je velká škála sensorů a akčních členů. Srdcem robota je
-    mikrokontroler s obvodem dsPIC. Skládá se z 16bitového procesoru a jednotky
-    pro zpracování signálu. Procesor má frekvenci 64 MHz, 8 kB RAM a 144 kB
-    flash paměti. Robot obsahuje následující sensory:
+    Součástí robota je velká škála senzorů a akčních členů. Srdcem robota je
+    mikrokontrolér s obvodem dsPIC. Skládá se z 16bitového procesoru dsPIC
+    30F6014A a jednotky pro zpracování signálu. Procesor má frekvenci 64 MHz, 8
+    kB RAM a 144 kB flash paměti. Robot obsahuje následující senzory:
 
     \begin{itemize}
-        \item Infračervené (IR) sensory -- po obvodu robota je 8 IR sensorů. Měří
+        \item Infračervené (IR) senzory -- po obvodu robota je 8 IR senzorů. Měří
         buď vzdálenost od překážek, anebo intenzitu okolního světla. Jedná se o
-        základní sensory využívané pro pohyb mezi překážkami.
+        základní senzory využívané pro pohyb mezi překážkami.
 
         \item Akcelerometr -- 3D akcelerometr slouží k získání vektoru
         zrychlení robota. Může být použit pro spoustu experimentů (měření
         náklonu, zrychlení, detekce nárazu, pádu, \ldots).
 
-        \item 3 mikrofony -- více mikrofonů slouží k triangulaci zdroje zvuku,
-        velikost dat získaných z mikrofonů je ovšem na kapacity robota příliš a
-        proto je nutné použít jednotku pro zpracování signálu (DSP).
+        \item 3 mikrofony -- mikrofony jsou 3, aby se daly použít k triangulaci
+        zdroje zvuku. Velikost dat získaných z mikrofonů je ovšem na kapacity
+        robota příliš a proto je nutné použít jednotku pro zpracování signálu
+        (DSP). Bez jejího použití můžeme získat alespoň naměřenou hlasitost.
 
         \item Barevná kamera -- v přední části robota je kamera s rozlišením
         640x480, bohužel kvůli paměťovým omezením robota je možné získat pouze
@@ -76,7 +77,7 @@
         viděním.
     \end{itemize}
 
-    Samotné sensory by samozřejmě byly bez užitku, kdyby robot neměl žádné
+    Samotné senzory by samozřejmě byly bez užitku, kdyby robot neměl žádné
     akční členy. Studenti mohou využít následujících komponent:
     \begin{itemize}
         \item 2 krokové motory -- slouží pro pohyb robota, mají rozlišení 1000
@@ -136,7 +137,7 @@
     Při synchronní komunikaci program po odeslání zprávy pozastaví vykonávání
     dalších instrukcí a čeká dokud nedostane odpověď. Tento přístup je velmi
     jednoduchý na implementaci (většinou se jedná o zavolání metody, která bude
-    čekat, dokud neobdrží zprávu), není problém s nekonzistencí dat (než bude
+    čekat, dokud neobdrží zprávu), není problém s inkonzistencí dat (než bude
     program pokračovat v činnosti, obdrží všechny informace).
 
     Překážkou pro synchronní komunikaci jsou ovšem ztráty zpráv při přenosu.
@@ -190,7 +191,7 @@
     synchronního přístupu. Naopak pro psaní kontrolních programů je větší důraz
     kladen na spolehlivost. Knihovna zajistí, že příkaz opravdu dojde, v
     nejhorším případě upozorní uživatele na skutečnost, že robot je
-    neovladatelný (může se stát třeba pokud mu dochází baterie).
+    neovladatelný (může se to stát, třeba pokud mu dochází baterie).
 
     Výhodou je, že firmware v e-pucku robotovi je z důvodu hardwarových omezení
     napsán synchronně. Na začátku je vždy zavolána funkce pro čtení z Bluetooth
@@ -207,7 +208,8 @@
     číslo je v podstatě také jeden znak, jeho číselná hodnota v ASCII kódování
     určuje pořadové číslo zprávy. Z toho samozřejmě vyplývá, že pořadová čísla
     nejsou unikátní. Ovšem mezi dvěma zprávami, které potenciálně mohou mít
-    stejný kód i stejné pořadové číslo, musí být posláno tolik jiných zpráv, že
+    stejný kód i stejné pořadové číslo, musí být posláno tolik jiných zpráv
+    (pořadí je určeno znaky anglické abecedy, takže by jich muselo být 52), že
     pravděpodobnost záměny těchto dvou je velmi malá (musely by se ztratit
     všechny zprávy mezi nimi a v takovém případě už je komunikace opravdu velmi
     nestabilní).
@@ -245,9 +247,9 @@
         Napsané programy je možné spouštět a testovat v simulátoru. To je
         samozřejmě velmi výhodné pro rychlé ladění programu. Ovšem výsledek v
         simulátoru se může od skutečného chování robota velmi lišit. Při psaní
-        programů je nutné myslet na to, že sensory v robotovi jsou
+        programů je nutné myslet na to, že senzory v robotovi jsou
         nespolehlivé, jejich hodnoty bývají zatíženy chybou a tak se na ně nedá
-        stoprocentně spolehnout. Webots simulátor se snaží virtuální sensory
+        stoprocentně spolehnout. Webots simulátor se snaží virtuální senzory
         přiblížit realitě a tak i hodnoty, které obdrží robot v simulátoru
         neodpovídají přesně simulované realitě.
 
@@ -338,7 +340,7 @@
         \begin{itemize}
             \item Simulátor světa,
             \item simulátor hardware robota,
-            \item ovládácí program robota.
+            \item ovládací program robota.
         \end{itemize}
 
         Simulátor funguje jako server a zpracovává celý experiment. Na výběr je
@@ -365,6 +367,9 @@
         robota (konečné automaty, neuronové sítě, posilované učení, fuzzy
         logika, evoluční algoritmy,~\ldots).
 
+        Smutnou skutečností ovšem je, že Pyro neobsahuje podporu pro e-puck
+        robota.
+
     \section{Specifikace e-puck knihovny}
     \label{specifikace}
 
@@ -374,7 +379,7 @@
 
     První důležitou vlastností je otevřenost zdrojových kódů. Uživatel je
     povzbuzován, aby do nich nahlédl. Jsou důkladně okomentovány a měly by
-    čtenářům ukázat příklad, jak může komunikace s robotem probíhat. Stejně tak
+    čtenářům ukázat vzor, jak může komunikace s robotem probíhat. Stejně tak
     ukázkové kontrolní programy jsou určeny pro předvedení možných způsobů
     ovládání robota.
 

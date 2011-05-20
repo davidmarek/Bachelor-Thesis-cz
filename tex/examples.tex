@@ -1,15 +1,15 @@
 \chapter{Příklady kontrolních programů}
 \label{priklady}
 
-Velmi důležitou součástí dokumentace knihovny je ukázka použití metod pro
+Velmi důležitou součástí dokumentace knihovny je ukázka jejího použití pro
 vyřešení komplexního problému. Samotný popis jednotlivých metod většinou
 nestačí uživateli k napsání vlastního programu. Je potřeba předvést jak se
 knihovna používá od vzniku programu až do jeho ukončení.
 
 Záměrem této práce není pouze vytvořit knihovnu pro ovládání robota, ale také
 předvést k čemu se dá robot použít a ukázat jak lze řešit některé časté úkoly.
-Proto v této kapitole bude k nalezení hned několik kompletních programů pro
-ovládání robota, na každém bude demonstrováno jak lze robota využít.
+Proto v této kapitole bude k nalezení hned několik kompletních programů
+demonstrujících vlastnosti e-puck robota a použití e-puck knihovny.
 
 Účelem ukázkových programů není uživatelům diktovat jakým způsobem mají
 využívat knihovnu. Jde pouze o inspiraci. Jak bude vidět, tak některé ukázkové
@@ -30,13 +30,13 @@ naměřené hodnoty světla na senzorech ovlivňují rychlost motorů. Robot pak
 vykazovat i pomocí triviálního programu na první pohled komplexní chování.
 Pokud má robot dva senzory a dvě kola a ty jsou spolu propojeny tak, že levý
 senzor zvyšuje rychlost levého kola se zvyšující se intenzitou a naopak pravý
-senzor zvyšuje rychlost pravého kola se snižující se intenzitou, pak robot bude
-kroužit okolo zdroje světla.
+senzor zvyšuje rychlost pravého kola se snižující se intenzitou, pak robot může
+vykazovat komplexní chování ve chvíli, kdy bude kroužit okolo zdroje světla.
 
 \subsection{Zdrojový kód}
 
-Ukážeme si trochu komplikovanější program, který, v závislosti na senzorech
-překážek, se snaží s robotem uhýbat překážkám. Program je o něco delší, protože
+Ukážeme si trochu komplikovanější program, který se, v závislosti na senzorech
+překážek, snaží s robotem uhýbat překážkám. Program je o něco delší, protože
 je potřeba normalizovat hodnoty na vstupech a upravit podle nich rychlost
 motorů.
 
@@ -310,14 +310,14 @@ d.main_loop()
 
 Program se chová jako stavový automat. Po startu se nachází ve stavu 0
 (přepínač ukazuje na černou tečku), kdy na začátku svítí dvě diody naproti sobě
-na obvodu robota a diody se pak rozsvicují a zhasínají, takže ve výsledku se
+na obvodu robota a diody se pak rozsvěcují a zhasínají, takže ve výsledku se
 zdá, že světla obíhají dokola, okolo robota.
 
 Ve chvíli, kdy uživatel otočí přepínač po směru hodinových ručiček, do polohy 1,
 dojde k změně stavu. Opět na začátku budou svítit dvě diody naproti sobě, ale
 světla se budou pohybovat proti sobě.
 
-V dalším stavu robot blíká přední diodou. To jsou tedy tři efekty, které jsou v
+V dalším stavu robot bliká přední diodou. To jsou tedy tři efekty, které jsou v
 programu zabudované. Pro přidání dalších stačí upravit několik metod:
 
 \begin{itemize}
@@ -460,7 +460,7 @@ root.mainloop()
 
 Program se skládá z několika částí, které využívají jednotlivé knihovny, na
 začátku (zdrojový kód \ref{kamera_okno}) je třeba nastavit kameru robota. Pro
-detekci obličejů se používá černobilých fotek, takže bylo možné zvětšit
+detekci obličejů se používá černobílých fotek, takže bylo možné zvětšit
 velikost fotografie. Dále je nutné vytvořit grafické okno pomocí knihovny
 Tkinter a načíst data pro knihovnu OpenCV, která používá pro detekci obličejů.
 
