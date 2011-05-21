@@ -182,15 +182,15 @@ programu v Pythonu.
 \label{LED}
 
 Robot disponuje osmi diodami. Ukážeme si program, který umí z diod vytvářet
-několik efektů. V tomto případě je nejzajímavější způsob, jakým je koncipován
-ovládací program a také možnost přepínačem na robotovi nastavit specifický
-podprogram.
+několik světelných efektů. V tomto případě je nejzajímavější způsob, jakým je
+koncipován ovládací program a také možnost přepínačem na robotovi nastavit
+specifický podprogram.
 Ovládací program je reprezentován třídou \code{Disco}. Provádí dvě věci:
 
 \begin{itemize}
     \item posílá příkazy pro ovládání diod dle zvoleného efektu,
-    \item kontroluje hodnotu na hardwarovém přepínači na robotovi a mění podle
-        ní efekt.
+    \item kontroluje asynchronně hodnotu na hardwarovém přepínači na robotovi a
+    mění podle ní efekt.
 \end{itemize}
 
 Program končí v případě, že na hardwarovém přepínači je speciální hodnota
