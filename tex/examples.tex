@@ -176,7 +176,7 @@ zapříčiňuje. že bude provedeno v průměru 7 iterací cyklu za jednu sekund
 Pokud ji odstraníme, tak nedojde k zlepšení chování robota, překážku uvidí ve
 velmi podobné vzdálenosti, ovšem bude provedeno v průměru 39 iterací. Což je
 dohromady 78 příkazů poslaných robotovi za sekundu a dále samozřejmě logika
-programu v Pythonu.
+programu v~Pythonu.
 
 \section{Ovládání LED}
 \label{LED}
@@ -189,8 +189,8 @@ Ovládací program je reprezentován třídou \code{Disco}. Provádí dvě věci
 
 \begin{itemize}
     \item posílá příkazy pro ovládání diod dle zvoleného efektu,
-    \item kontroluje asynchronně hodnotu na hardwarovém přepínači na robotovi a
-    mění podle ní efekt.
+    \item kontroluje asynchronně hodnotu na hardwarovém přepínači na robotovi
+    a~mění podle ní efekt.
 \end{itemize}
 
 Program končí v případě, že na hardwarovém přepínači je speciální hodnota
@@ -326,7 +326,7 @@ Nejzajímavější z hlediska práce s robotem je metoda \code{get\_state} (zdro
 kód \ref{get_state}). Metoda kontroluje, zda-li došlo ke změně stavu. Po
 zavolání příkazu \code{get\_turning\_selector} ovšem nečeká na odpověď. Místo
 toho jen zkontroluje, zda-li odpověď už došla. Pokud nedošla, tak metoda končí
-a při dalším zavolání také jen kontroluje zda již nedorazila odpověď. Po
+a při dalším zavolání také jen kontroluje, zda již nedorazila odpověď. Po
 získání nového stavu dojde k patřičné změně a opět, jako na začátku, bude
 zaslán příkaz \code{get\_turning\_selector}.
 
@@ -356,11 +356,11 @@ zaslán příkaz \code{get\_turning\_selector}.
 
 Jednou z velkých výhod e-puck knihovny je jednoduchá integrace s jinými
 knihovnami. Ukážeme si program, který integruje dokonce dvě knihovny naráz.
-První z nich je knihovna Tkinter, jednoduchá knihovna pro vytváření grafického
+První z~nich je knihovna Tkinter, jednoduchá knihovna pro vytváření grafického
 rozhraní, která se dodává s Pythonem. Druhou použitou knihovnou je OpenCV,
 knihovna pro počítačové vidění (Computer Vision). Využijeme je pro vytvoření
 grafické aplikace, která zobrazuje aktuální obrázek z kamery robota a vyznačuje
-nalezené obličejů.
+nalezené obličeje.
 
 \begin{listing}[H]
 \begin{center}
@@ -529,8 +529,8 @@ pro detekci obličejů, nalezené obličeje jsou zakresleny do fotky (zdrojový 
 \label{opencv_part}
 \end{listing}
 
-Nakonec už je fotka naposledy převedena, tentokrát do formátu pro Tkinter, a
-zobrazena (\ref{tkinter_show}). Funkce \code{after} slouží k periodickému
+Nakonec už je fotka naposledy převedena, tentokrát do formátu pro Tkinter,
+a~zobrazena (\ref{tkinter_show}). Funkce \code{after} slouží k periodickému
 volání metody \code{show\_photo} každých 10ms. Díky tomu by se měl obraz
 aktualizovat téměř v reálném čase (samozřejmě je snímání fotky v robotovi
 znatelné na časové prodlevě).

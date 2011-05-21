@@ -2,7 +2,7 @@
 \label{dokumentace}
 
     Interakce uživatele s knihovnou se skládá ze dvou částí. V té první se
-    jedná o připojení robota k počítači a uvedení jej do provozuschopného
+    jedná o~připojení robota k počítači a uvedení jej do provozuschopného
     stavu. Součástí této inicializace je vytvoření spojení mezi počítačem a
     robotem a nainstalování firmware do robota. Vysvětlení jak se vše provádí
     je k nalezení v kapitole \ref{pripojeni_robota}.
@@ -27,7 +27,7 @@
     k počítači na operačním systému Linux je tedy třeba mít nainstalovánu
     podporu pro Bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
     bluez-utils}, dále je potřeba mít software pro správu PIN hesel ({\tt
-    bluez-pin, bluez-gnome a bluetooth-applet, \ldots}).
+    bluez-pin, bluez-gnome a~bluetooth-applet, \ldots}).
 
     Nejprve je potřeba zjistit adresu robota. Lze využít utilitu {\tt hcitool}:
 
@@ -62,8 +62,8 @@
     Press CTRL-C for hangup
     \end{verbatim}
 
-    Je důležité, aby uživatel, který bude ovládat robota, měl právo přístupu k
-    zařízení \code{/dev/rfcomm0}.
+    Je důležité, aby uživatel, který bude ovládat robota, měl právo přístupu
+    k~zařízení \code{/dev/rfcomm0}.
 
     Po těchto příkazech by už mělo být vytvořené spojení s robotem a je možné
     mu začít posílat příkazy pomocí knihovny. V průběhu připojení se systém
@@ -79,7 +79,7 @@
         přistupovat k zařízení \code{/dev/rfcomm0}.}
     \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná
         příčina je už připojené zařízení. Buď už běží {\tt rfcomm}, anebo jiná
-        aplikace, která s robotem udržuje komunikaci. Řešením je zavřít
+        aplikace, která s~robotem udržuje komunikaci. Řešením je zavřít
         aplikace komunikující s robotem, popř. zkusit následující příkazy:
     \begin{verbatim}
     $ rfcomm release rfcomm0
@@ -93,11 +93,11 @@
     Knihovna komunikuje s E-puck robotem pomocí posílání textových příkazů. Je
     třeba do robota nahrát firmware BTcomDM. Ten je dodáván s knihovnou.
     K jeho nahrání slouží skript \code{epuckupload} \cite{epuckupload}. Stačí
-    se řídit pomocí \code{README} a do robota nahrát soubor \code{BTcom.hex}.
+    se řídit pomocí \code{README} a do robota nahrát soubor \code{BTcomDM.hex}.
     Příklad použití:
 
     \begin{verbatim}
-    $ epuckupload -f BTcom.hex rfcomm0
+    $ epuckupload -f BTcomDM.hex rfcomm0
     \end{verbatim}
 
     Po spuštění příkazu je třeba robota restartovat (modré tlačítko na horní
@@ -109,8 +109,8 @@
     takže je možné ji nainstalovat pomocí skriptu \code{setup.py}.
 
     \begin{verbatim}
-    $ tar -xvf epuck-1.0.tar.gz
-    $ cd epuck-1.0/
+    $ tar -xvf epuck-0.9.1.tar.gz
+    $ cd epuck-0.9.1/
     $ sudo python setup.py install
     \end{verbatim}
 
@@ -183,8 +183,8 @@ controller.set_speed(0, 0)
 from epuck import Controller
     \end{pyc*}
 
-    Nyní máme importovanou třídu {\tt Controller}, která slouží ke komunikaci s
-    robotem. Stačí už jen vytvořit samotné spojení:
+    Nyní máme importovanou třídu {\tt Controller}, která slouží ke komunikaci
+    s~robotem. Stačí už jen vytvořit samotné spojení:
 
     \begin{pyc*}{firstnumber=15}
 controller = Controller('/dev/rfcomm0', asynchronous=True)
@@ -255,7 +255,7 @@ while (sensor_values['L10'] < threshold) \
 
     \subsection{Synchronní verze}
 
-    Nyní si ukážeme jak by vypadal stejný program napsaný synchronně (zdrojový
+    Nyní si ukážeme, jak by vypadal stejný program napsaný synchronně (zdrojový
     kód \ref{lst:simple_sync_example}).
 
     \begin{mylisting}

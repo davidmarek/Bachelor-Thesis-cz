@@ -2,10 +2,10 @@
 \label{chap:teorie}
 
     V této části bych rád uvedl všechny základní součásti, na kterých má práce
-    stojí, a také bych se rád zmínil o způsobech, jak řeší ovládání robota
+    stojí, a~také bych se rád zmínil o způsobech, jak řeší ovládání robota
     jiní. Nejprve je nutné zjistit, jaké vlastnosti má robot e-puck, abychom
     pak dále mohli posoudit do jaké míry využíváme jeho předností a také
-    zhodnotit využitelnost práce v praxi.
+    zhodnotit využitelnost práce v~praxi.
 
     Popis e-puck robota je v sekci \ref{e-puck robot}. Dále je potřeba zmínit
     jakými způsoby může probíhat komunikace, jaká úskalí přináší oddělení
@@ -19,17 +19,19 @@
     \label{e-puck robot}
     E-puck je miniaturní robot vytvořený pro výukové účely na akademické
     úrovni. Vytvořen byl v EPFL (Ecole Polytechnique Fédérale de Laussanne) v
-    roce 2004. Celý projekt je založen na konceptu otevřeného hardware, což
-    znamená, že všechny dokumenty a schémata jsou dostupná pod svobodnou
-    licencí umožňující komukoli využívat e-puck robota na maximum a vyvíjet pro
-    něj ať už software, anebo např. hardwarové nadstavby.
+    roce 2004. Celý projekt je založen na principu otevřeného hardware a open
+    source, což znamená, že všechny dokumenty a schémata jsou dostupná pod
+    svobodnou licencí umožňující komukoli využívat e-puck robota na maximum a
+    vyvíjet pro něj ať už software, anebo např. hardwarové nadstavby.
 
+    \renewcommand\listingscaption{Obrázek}
     \begin{listing}
         \begin{center}
             \includegraphics[scale=0.5]{e-puck.jpg}
             \caption{E-puck robot}
         \end{center}
     \end{listing}
+    \renewcommand\listingscaption{Zdrojový kód}
 
     E-puck robot byl vytvořen s několika kritérii \cite{bonani}:
     \begin{itemize}
@@ -55,7 +57,7 @@
     Součástí robota je velká škála senzorů a akčních členů. Srdcem robota je
     mikrokontrolér s obvodem dsPIC. Skládá se z 16bitového procesoru dsPIC
     30F6014A a jednotky pro zpracování signálu. Procesor má frekvenci 64 MHz, 8
-    kB RAM a 144 kB flash paměti. Robot obsahuje následující senzory:
+    kB RAM a~144 kB flash paměti. Robot obsahuje následující senzory:
 
     \begin{itemize}
         \item Infračervené (IR) senzory -- po obvodu robota je 8 IR senzorů. Měří
@@ -83,8 +85,9 @@
         \item 2 krokové motory -- slouží pro pohyb robota, mají rozlišení 1000
         kroků za jedno otočení kola.
 
-        \item Reproduktor -- ve spojení s mikrofony může sloužit pro dorozumívání s
-        jinými roboty, také jde o výhodný způsob interakce s uživatelem.
+        \item Reproduktor -- ve spojení s mikrofony může sloužit pro
+        dorozumívání s~jinými roboty, také jde o výhodný způsob interakce s
+        uživatelem.
 
         \item 8 LED -- diody jsou rozmístěné po obvodu robota. Slouží jako
         vizuální rozhraní pro uživatele, anebo pro jiného robota.
@@ -102,15 +105,15 @@
     který bude vykonáván přímo uvnitř robota, v programovacím jazyku C. Výrobce
     navíc dodává knihovnu s intuitivním rozhraním pro ovládání všech součástí.
     Tento přístup má ovšem několik nevýhod. Cyklus vývoje programu je pomalý,
-    kvůli každé změně v programu je třeba spustit kompilaci na počítači, dále
-    nahrát program do robota a teprve pak je možné změnu vyzkoušet. Dalším
+    kvůli každé změně v~programu je třeba spustit kompilaci na počítači, dále
+    nahrát program do robota a~teprve pak je možné změnu vyzkoušet. Dalším
     problémem je výkon robota, který nemusí stačit pro složitější výpočty.
 
     Lepším způsobem se tedy zdá využívat program v robotovi pouze pro
     vykonávání příkazů, které jsou naplánovány v počítači. To je přístup,
     kterým se zabývá tato práce. Získáme tím jednu obrovskou výhodu, kterou je
     výpočetní síla stolního počítače, na druhou stranu s ní ovšem musíme
-    přijmout i břímě problémů s komunikací.
+    přijmout i břímě problémů s~komunikací.
 
     \section{Synchronní / asynchronní komunikace}
     \label{sync/async}
@@ -143,11 +146,11 @@
     Překážkou pro synchronní komunikaci jsou ovšem ztráty zpráv při přenosu.
     Může dojít k chybě při přenosu dat a ke ztrátě odeslané zprávy, anebo
     příchozí odpovědi. Stejně tak se může stát, že adresát zprávy na ni nijak
-    neodpověděl. V takovýchto případech lehce dojde k tzv. dead-locku, kdy bude
+    neodpověděl. V~takovýchto případech lehce dojde k tzv. dead-locku, kdy bude
     odesílatel čekat na zprávu, která nikdy nepřijde, a tak nebude moci
     pokračovat v dalších výpočtech.
 
-    Dochází také k mrhání procesorovým časem, čas strávený čekáním na odpověď
+    Dochází také k mrhání procesorovým časem. Čas strávený čekáním na odpověď
     by mohl být smysluplně využit. Typickým příkladem je grafické rozhraní, kde
     je potřeba zaručit interakci a nereagování na akce uživatele je ukazatelem
     špatně napsané aplikace. Ale nemusí jít jen o složité aplikace s grafickým
@@ -179,7 +182,7 @@
     ve stejném pořadí, v jakém byly odeslány. Tento problém musí řešit
     například protokol TCP/IP. Řešením je zprávy posílat s pořadovým číslem a
     toto číslo přidat i k odpovědi. Pak je velmi snadné příchozí zprávy seřadit
-    podle pořadí, v jakém jsou požadovány.
+    podle pořadí, v~jakém jsou požadovány.
 
     \subsection{Komunikace v e-puck knihovně}
     \label{comm-epuck}
@@ -241,8 +244,8 @@
         \label{webots}
 
         Webots \cite{webots} je vývojové prostředí a simulátor pro programování robotů.
-        Nabízí podporu nejen pro e-puck robota a umožňuje robota programovat v
-        několika jazycích (C++, Java, Python).
+        Nabízí podporu nejen pro e-puck robota, ale i pro řadu dalších robotů a
+        umožňuje roboty programovat v několika jazycích (C++, Java, Python).
 
         Napsané programy je možné spouštět a testovat v simulátoru. To je
         samozřejmě velmi výhodné pro rychlé ladění programu. Ovšem výsledek v
@@ -250,12 +253,12 @@
         programů je nutné myslet na to, že senzory v robotovi jsou
         nespolehlivé, jejich hodnoty bývají zatíženy chybou a tak se na ně nedá
         stoprocentně spolehnout. Webots simulátor se snaží virtuální senzory
-        přiblížit realitě a tak i hodnoty, které obdrží robot v simulátoru
+        přiblížit realitě a tak i hodnoty, které obdrží robot v~simulátoru
         neodpovídají přesně simulované realitě.
 
         Výhodou Webots je tedy kvalitní simulátor, pokud se ovšem podíváme na
         ovládání skutečného robota, tak tady se od mé práce v mnohém neliší.
-        Webots umožňuje dva způsoby jak řídit skutečného robota, prvním je
+        Webots umožňuje dva způsoby jak řídit skutečného robota. Prvním je
         kompilace programu a nahrání do robota. Ta funguje pouze pokud je
         program napsán v jazyku C.
 
@@ -266,9 +269,9 @@
         dostupné zdrojové kódy a v dokumentaci není k nalezení přesnější
         informace. Všechny funkce jsou ovšem volány synchronně.
 
-        Tím se dostáváme k hlavní nevýhodě Webots. Jedná se o komerční projekt,
-        dostupná zdarma je pouze testovací časově omezená verze a nejsou
-        dostupné zdrojové kódy (právě např. firmwaru).
+        Tím se dostáváme k hlavní nevýhodě Webots. Jedná se o komerční projekt.
+        Zdarma je pouze časově omezená verze a nejsou dostupné zdrojové kódy
+        (právě např. firmwaru).
 
         \subsection{Cyberbotics' Robot Curriculum}
         \label{curriculum}
@@ -276,16 +279,16 @@
         Pokud jsme se bavili o Webots, tak stojí za zmínku také kniha
         Cyberbotics' Robot Curriculum \cite{cyberbotics}. Autorem je Olivier
         Michel, dále byla rozšířena na EPFL, nyní je dostupná na
-        Wikibooks \cite{wikibooks}. Kniha je určena všem, kteří mají zájem o
-        robotiku. Skládá se ze dvou částí, v první pojednává o teoretických
+        Wikibooks \cite{wikibooks}. Kniha je určena všem, kteří mají zájem
+        o~robotiku. Skládá se ze dvou částí. V první pojednává o teoretických
         základech (umělá inteligence, robotika, e-puck robot), ve druhé už se
-        snaží čtenáře naučit jak se ovládají roboti.
+        snaží čtenáře naučit, jak se ovládají roboti.
 
         Kniha pro výuku programování robota používá e-puck robota a simulátor
         Webots. Vysvětluje principy, které se při programování robotů
         používají. Postupuje od jednoduchých příkladů jako je pohyb s robotem,
         vyhýbání se překážkám, následování čáry, přes využití všech senzorů
-        robota (akcelerometr, kamera) až ke složitějším technikám.
+        robota (akcelerometr, kamera), až ke složitějším technikám.
 
         V kapitole pro pokročilé čtenáře se zabývá odometrií, plánováním cesty,
         rozpoznáváním tvarů, strojovým učením a dalšími metodami vyvíjení
@@ -315,7 +318,7 @@
         e-puck robotovi. Skládá se z několika částí:
 
         \begin{itemize}
-            \item Evoluční algoritmus,
+            \item evoluční algoritmus,
             \item simulátor neuronové sítě,
             \item simulátor robota a prostředí,
             \item grafické rozhraní a příkazy pro analýzu experimentů,
@@ -338,7 +341,7 @@
 
         Pyro je napsán v Pythonu, každý experiment se skládá z několika částí:
         \begin{itemize}
-            \item Simulátor světa,
+            \item simulátor světa,
             \item simulátor hardware robota,
             \item ovládací program robota.
         \end{itemize}
@@ -383,14 +386,14 @@
     ukázkové kontrolní programy jsou určeny pro předvedení možných způsobů
     ovládání robota.
 
-    Uživatel si může vybrat zda-li má být komunikace synchronní nebo
+    Uživatel si může vybrat, zda-li má být komunikace synchronní nebo
     asynchronní. Synchronní komunikace slouží k experimentování s robotem, ve
     spojení s Pythonem se jedná o velmi jednoduchý a rychlý způsob jak robotovi
     předávat příkazy. Jedná se o jednu z výhod e-puck knihovny.
 
-    V případě psaní složitějších programů ovšem e-puck knihovna nezůstává v
-    ničem pozadu za konkurencí. Nabízí spolehlivou asynchronní komunikaci, díky
-    které se může uživatel spolehnout, že příkazy posílané robotovi budou
+    V případě psaní složitějších programů ovšem e-puck knihovna nezůstává
+    v~ničem pozadu za konkurencí. Nabízí spolehlivou asynchronní komunikaci,
+    díky které se může uživatel spolehnout, že příkazy posílané robotovi budou
     opravdu provedeny. Tohoto ovšem nebylo dosaženo bez úsilí, asynchronní
     komunikace samotná není dokonalá a nedokáže vyřešit všechny problémy. Je
     nutné, aby s ní spolupracoval firmware v robotovi.
