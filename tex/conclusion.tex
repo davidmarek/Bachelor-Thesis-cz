@@ -2,12 +2,10 @@
 \addcontentsline{toc}{chapter}{Závěr}
 
     Ve své práci jsem splnil všechny cíle, které jsem si vytyčil. Vznikla
-    knihovna, která v sobě odráží základní myšlenku programovacího jazyka
-    Python, ve kterém je napsána. Programování je intuitivní, lehce
-    pochopitelné, je možné rychlé prototypování třeba jen části kódu, nebo
-    interaktivní ovládání robota z interpretu. Na druhou stranu knihovna nabízí
-    i podporu pro vytváření aplikací, kde se můžeme spolehnout, že každý
-    zaslaný příkaz bude proveden.
+    knihovna, která je intuitivní, umožňuje rychlé prototypování ovládacích
+    programů, nebo interaktivní ovládání robota z interpretu. Na druhou stranu
+    knihovna nabízí i podporu pro vytváření robustních aplikací, kde se můžeme
+    spolehnout, že každý zaslaný příkaz bude proveden.
 
     Uživatel dostává možnost si vybrat mezi transparentní synchronní
     komunikací, anebo asynchronní komunikací, u které nemusí čekat na přijetí
@@ -18,17 +16,14 @@
 
     Dalším úspěchem je přepracování firmware BTcom, napsaného v jazyku C a
     nahrávaného přímo do robota, který je standardně dodáván s e-puck robotem.
-    Díky mým úpravám je možné velmi přesně párovat zaslané příkazy a došlé
-    odpovědi. Dále jsem upravil binární odpovědi, aby začínaly hlavičkou
-    obsahující informace o příkazu a velikost přenášených dat. Zpracování došlé
-    binární odpovědi tak není závislé na hádání, ke kterému příkazu odpověď
-    patří. Díky těmto změnám jsem mohl vytvořit kontrolní mechanismy
-    zabraňující ztrátě příkazů. Každý příkaz má danou časovou lhůtu, do které
-    musí dojít odpověď, jinak je považován za ztracený a odeslán znova.
+    S novou verzí BTcomDM je možné velmi přesně párovat zaslané příkazy a došlé
+    odpovědi. Díky provedeným změnám bylo možné vytvořit kontrolní mechanismy
+    zabraňující ztrátě příkazů. Každý příkaz má nyní danou časovou lhůtu, do
+    které musí dojít odpověď, jinak je považován za ztracený a odeslán znova.
 
     Pokusil jsem se i vyřešit některé základní problémy, které provázejí e-puck
     robota. Situaci, kdy robot přestává reagovat, protože mu dochází baterie,
-    jsem vyřešil optickou signalizací. Jedná se na první pohled o drobnou
+    byla vyřešena optickou signalizací. Jedná se na první pohled o drobnou
     změnu, ovšem pro programování robota jde o neocenitelnou pomůcku. Obzvlášť
     když si student robota půjčuje v počítačové laboratoři a tak si nikdy
     nemůže být jistý, kdy byl naposledy dobíjen.

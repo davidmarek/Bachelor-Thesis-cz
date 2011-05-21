@@ -33,6 +33,8 @@
 
     \begin{verbatim}
     $ hcitool scan
+    Scanning ...
+        10:00:E8:52:C6:3E	e-puck_1055
     \end{verbatim}
 
     Adresa robota se použije při nastavení virtuálního sériového portu v
@@ -41,9 +43,9 @@
     \begin{verbatim}
     rfcomm0 {
         bind yes;
-        device 08:00:17:2C:E0:88; # Adresa zařízení
+        device 10:00:E8:52:C6:3E; # Adresa zařízení
         channel 1;
-        comment "e-puck_0006";    # Vlastní komentář
+        comment "e-puck_1055";    # Vlastní komentář
     }
     \end{verbatim}
 
@@ -55,7 +57,9 @@
     připojit robota:
 
     \begin{verbatim}
-    $ rfcomm connect rfcomm0
+    $ sudo rfcomm connect rfcomm0
+    Connected /dev/rfcomm0 to 10:00:E8:52:C6:3E on channel 1
+    Press CTRL-C for hangup
     \end{verbatim}
 
     Je důležité, aby uživatel, který bude ovládat robota, měl právo přístupu k
@@ -71,6 +75,8 @@
     \begin{itemize}
     \item{{\em Can't connect RFCOMM socket: Connection refused} -- Nejspíše
         neběží žádná aplikace, která by se na heslo zeptala.}
+    \item{{\em Can't open RFCOMM device: Permission denied} -- Uživatel nemůže
+        přistupovat k zařízení \code{/dev/rfcomm0}.}
     \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná
         příčina je už připojené zařízení. Buď už běží {\tt rfcomm}, anebo jiná
         aplikace, která s robotem udržuje komunikaci. Řešením je zavřít
@@ -96,6 +102,24 @@
 
     Po spuštění příkazu je třeba robota restartovat (modré tlačítko na horní
     straně). Teprve pak se začne nahrávat nový firmware.
+
+    \subsection{Instalace knihovny}
+
+    Knihovna je dodávána v balíčku v příloze. Podporuje standardní instalaci,
+    takže je možné ji nainstalovat pomocí skriptu \code{setup.py}.
+
+    \begin{verbatim}
+    $ tar -xvf epuck-1.0.tar.gz
+    $ cd epuck-1.0/
+    $ sudo python setup.py install
+    \end{verbatim}
+
+    Také je možné ji nainstalovat z webového repositáře PyPI (Python Package
+    Index) \cite{pypi} pomocí programu \code{easy\_install}.
+
+    \begin{verbatim}
+    $ easy_install epuck
+    \end{verbatim}
 
 \section{Ukázkový program}
 \label{ukazkovy_program}
@@ -228,3 +252,55 @@ while (sensor_values['L10'] < threshold) \
     \begin{pyc*}{firstnumber=36}
     controller.set_speed(0, 0)
     \end{pyc*}
+
+    \subsection{Synchronní verze}
+
+    Nyní si ukážeme jak by vypadal stejný program napsaný synchronně (zdrojový
+    kód \ref{lst:simple_sync_example}).
+
+    \begin{mylisting}
+    \begin{pyc}
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""Go forward, stop in front of an obstacle."""
+
+import time
+
+from epuck import Controller
+
+# Input larger than the threshold means there is an obstacle.
+threshold = 300
+
+# Create the controller. Robot is connected to /dev/rfcomm0
+# and the communication will be asynchronous.
+controller = Controller('/dev/rfcomm0', asynchronous=False)
+
+# Set the speed of left and right wheel to 100.
+controller.set_speed(100, 100)
+
+# Ask for the values of proximity sensors
+sensor_values = controller.get_proximity_sensors()
+
+# Continue while there is nothing in front of the front left
+# and front right sensor.
+while (sensor_values['L10'] < threshold) \
+    and (sensor_values['R10'] < threshold):
+    # Wait for a while
+    time.sleep(0.1)
+    # Read new values
+    sensor_values = controller.get_proximity_sensors()
+
+# Stop the robot
+controller.set_speed(0, 0)
+\end{pyc}
+\captionof{listing}{Jednoduchý synchronní program pro ovládání robota}
+\label{lst:simple_sync_example}
+\end{mylisting}
+\hfill\\
+
+Prvním rozdílem je nastavení synchronní komunikace na řádku 15. Dále pak vždy
+při získávání dat z robota můžeme vynechat jeden řádek a nechat pouze volání
+příkazu, které rovnou vrací výsledek (řádky 21 a 30).
+
+Další příklady kontrolních programů jsou k nalezení v kapitole \ref{priklady}.

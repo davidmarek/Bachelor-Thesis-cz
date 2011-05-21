@@ -52,8 +52,6 @@ import sys
 
 from epuck import Controller, WrongCommand
 
-logging.basicConfig(level=logging.WARNING)
-
 c = Controller('/dev/rfcomm0', asynchronous=True)
 
 bias = 200
@@ -113,7 +111,7 @@ která zastaví robota a ukončí program. Příkaz pro zastavení je předán p
 systémových přerušení zaslaných ovládacímu programu.
 
 \begin{listing}[H]
-\begin{pyc*}{firstnumber=20}
+\begin{pyc*}{firstnumber=18}
 # Signal handler to cleanup after shutdown
 def handle_signal(signum, frame):
     r = c.set_speed(0,0)
@@ -133,11 +131,10 @@ závislý na datech ze senzorů překážek. Pro jednodušší práci jsou data 
 podle strany robota, na které leží senzor, levá nebo pravá. K oběma hodnotám
 senzorů je přičtena proměnná \code{bias}. Jejím posláním je posunout hodnoty
 senzorů v místě bez překážek od nuly, protože rychlost robota bude přímo
-záviset na těchto hodnotách a tak by robot uvízl v místech bez podnětů pro
-senzory.
+záviset na těchto hodnotách a v místech bez podnětů pro senzory by robot uvázl.
 
 \begin{listing}[H]
-\begin{pyc*}{firstnumber=29}
+\begin{pyc*}{firstnumber=27}
 while True:
     # Read values from proximity sensors
     r = c.get_proximity_sensors()
@@ -154,11 +151,11 @@ Naměřené hodnoty ze senzorů projdou už jen velmi drobnými úpravami (zdroj
 kód \ref{normal_prox_s}), veskrze jde hlavně o jejich
 normalizaci pro použití jako argument příkazu pro změnu rychlosti robota. V
 případě, že překážka je příliš blízko robota a tak by nebyl schopen se jí
-vyhnout (nebo je přímo před ním), jedna rychlost změní znaménko a robota se tak
+vyhnout (nebo je přímo před ním), jedna rychlost změní znaménko a robot se tak
 začne otáčet na místě jako tank.
 
 \begin{listing}[H]
-\begin{pyc*}{firstnumber=37}
+\begin{pyc*}{firstnumber=35}
     left_speed = left_sensors if right_sensors < too_close \
                  else -left_sensors
     right_speed = right_sensors if left_sensors < too_close \
@@ -214,10 +211,10 @@ from epuck import Controller, WrongCommand
 class Disco(object):
     """Test leds.
 
-    Tests few effects with leds. 
-    The effect can be changed with turning switch.
+    Tests a few effects with leds.
+    The effect can be changed by turning selector.
 
-    Turning switch values:
+    Turning selector values:
 
         0 -- Two rotating lights.
         1 -- Two rotating light in opposite directions.
@@ -230,7 +227,7 @@ class Disco(object):
         self.c = Controller('/dev/rfcomm0', asynchronous=True)
         self.state_request = None
         # Get first state
-        self.state = self.c.get_turning_switch().get_response()
+        self.state = self.c.get_turning_selector().get_response()
 
     def init_vars(self):
         """Initialize vars used for effects."""
@@ -245,10 +242,10 @@ class Disco(object):
         self.c.set_front_led(0)
 
     def get_state(self):
-        """Get the value of turning switch."""
+        """Get the value of turning selector."""
         # The get_state has been called for the first time
         if self.state_request is None:
-            self.state_request = self.c.get_turning_switch()
+            self.state_request = self.c.get_turning_selector()
         # The response has been received
         elif self.state_request.response_received():
             new_state = self.state_request.get_response()
@@ -256,8 +253,8 @@ class Disco(object):
             if new_state != self.state:
                 self.state = new_state
                 self.init_state()
-            # Check the turning switch
-            self.state_request = self.c.get_turning_switch()
+            # Check the turning selector
+            self.state_request = self.c.get_turning_selector()
 
     def run(self):
         """Do a step in the chosen effect."""
@@ -327,19 +324,19 @@ programu zabudované. Pro přidání dalších stačí upravit několik metod:
 
 Nejzajímavější z hlediska práce s robotem je metoda \code{get\_state} (zdrojový
 kód \ref{get_state}). Metoda kontroluje, zda-li došlo ke změně stavu. Po
-zavolání příkazu \code{get\_turning\_switch} ovšem nečeká na odpověď. Místo
+zavolání příkazu \code{get\_turning\_selector} ovšem nečeká na odpověď. Místo
 toho jen zkontroluje, zda-li odpověď už došla. Pokud nedošla, tak metoda končí
 a při dalším zavolání také jen kontroluje zda již nedorazila odpověď. Po
 získání nového stavu dojde k patřičné změně a opět, jako na začátku, bude
-zaslán příkaz \code{get\_turning\_switch}.
+zaslán příkaz \code{get\_turning\_selector}.
 
 \begin{listing}[H]
 \begin{pyc*}{firstnumber=42}
     def get_state(self):
-        """Get the value of turning switch."""
+        """Get the value of turning selector."""
         # The get_state has been called for the first time
         if self.state_request is None:
-            self.state_request = self.c.get_turning_switch()
+            self.state_request = self.c.get_turning_selector()
         # The response has been received
         elif self.state_request.response_received():
             new_state = self.state_request.get_response()
@@ -347,8 +344,8 @@ zaslán příkaz \code{get\_turning\_switch}.
             if new_state != self.state:
                 self.state = new_state
                 self.init_state()
-            # Check the turning switch
-            self.state_request = self.c.get_turning_switch()
+            # Check the turning selector
+            self.state_request = self.c.get_turning_selector()
 \end{pyc*}
 \caption{Získání nového stavu}
 \label{get_state}
