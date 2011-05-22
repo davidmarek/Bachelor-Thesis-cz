@@ -51,6 +51,7 @@
 \usepackage{epstopdf}
 \usepackage{caption}
 \usepackage{minted}
+\usepackage{palatino}
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
@@ -85,7 +86,7 @@
 }
 
 \renewcommand\listingscaption{Zdrojový kód}
-\newminted[pyc]{python}{linenos=true, frame=lines}
+\newminted[pyc]{python}{linenos=true, frame=lines, fontsize=\small}
 \usemintedstyle{bw}
 \newcommand{\code}[1]{\texttt{\small #1}}
 

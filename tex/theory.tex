@@ -7,19 +7,18 @@
     pak dále mohli posoudit do jaké míry využíváme jeho předností a také
     zhodnotit využitelnost práce v~praxi.
 
-    Popis e-puck robota je v sekci \ref{e-puck robot}. Dále je potřeba zmínit
-    jakými způsoby může probíhat komunikace, jaká úskalí přináší oddělení
-    kontrolního programu od hardware a jak se dají mírnit rizika z tohoto
-    plynoucí, tím se zabývá sekce \ref{sync/async}. V sekci \ref{existujici
-    prace} se podíváme na jiné projekty, které se zabývají ovládáním robota.
-    Nakonec v části \ref{specifikace} je k nalezení specifikace vytvořené
-    e-puck knihovny.
+    Popis e-puck robota je v sekci \ref{e-puck robot}. Také je nutné zmínit
+    způsoby komunikace, jaká úskalí přináší oddělení kontrolního programu od
+    hardware a jak se dají mírnit rizika z tohoto plynoucí, tím se zabývá sekce
+    \ref{sync/async}. V sekci \ref{existujici prace} se podíváme na jiné
+    projekty, které se zabývají ovládáním robota. Nakonec v části
+    \ref{specifikace} je k nalezení specifikace vytvořené e-puck knihovny.
 
     \section{E-puck robot}
     \label{e-puck robot}
-    E-puck je miniaturní robot vytvořený pro výukové účely na akademické
-    úrovni. Vytvořen byl v EPFL (Ecole Polytechnique Fédérale de Laussanne) v
-    roce 2004. Celý projekt je založen na principu otevřeného hardware a open
+    E-puck je miniaturní robot stvořený pro výukové účely na akademické úrovni.
+    Vytvořen byl v EPFL (Ecole Polytechnique Fédérale de Laussanne) v roce
+    2004. Celý projekt je založen na principu otevřeného hardware a open
     source, což znamená, že všechny dokumenty a schémata jsou dostupná pod
     svobodnou licencí umožňující komukoli využívat e-puck robota na maximum a
     vyvíjet pro něj ať už software, anebo např. hardwarové nadstavby.
@@ -96,8 +95,8 @@
         robota, ale také může být použita pro interakci s jinými objekty.
 
         \item Přední dioda u kamery -- tato LED nevytváří rozptýlené světlo,
-        ale paprsek, který je možné použít s kamerou pro odhadování vzdálenosti
-        k překážkám, když IR senzory nestačí.
+        ale paprsek, který je možné použít dohromady s kamerou pro odhadování
+        vzdálenosti k~překážkám, když IR senzory nestačí.
     \end{itemize}
 
     Ovládání e-puck robota je možné řešit několika způsoby. V první řadě
@@ -166,7 +165,7 @@
 
     Asynchronní komunikace řeší některé problémy komunikace synchronní. Po
     odeslání zprávy program pokračuje ve vykonávání instrukcí, nečeká na
-    odpověď. Může si ale kdykoli zkontrolovat, zda-li už nepřišla odpověď a pak
+    odpověď. Může si ale kdykoli zkontrolovat, zda-li už nepřišla odpověď a~pak
     ji teprve načíst a zpracovat. Speciálním případem je komunikace řízená
     událostmi (event-driven), kdy je pro zpracování události přijetí zprávy
     určena funkce, která je automaticky spuštěna, bez přímé intervence
@@ -190,14 +189,14 @@
     V této práci je uživateli knihovny dána možnost vybrat si mezi komunikací
     synchronní a asynchronní. Synchronní komunikace je určena pro rychlé
     prototypování a interaktivní ovládání robota. Uživatel může zadávat příkazy
-    a dívat se, jak na ně robot reaguje. Tady je výhodná transparentnost
+    a~dívat se, jak na ně robot reaguje. Tady je výhodná transparentnost
     synchronního přístupu. Naopak pro psaní kontrolních programů je větší důraz
     kladen na spolehlivost. Knihovna zajistí, že příkaz opravdu dojde, v
     nejhorším případě upozorní uživatele na skutečnost, že robot je
     neovladatelný (může se to stát, třeba pokud mu dochází baterie).
 
     Výhodou je, že firmware v e-pucku robotovi je z důvodu hardwarových omezení
-    napsán synchronně. Na začátku je vždy zavolána funkce pro čtení z Bluetooth
+    napsán synchronně. Na začátku je vždy zavolána funkce pro čtení z~Bluetooth
     spojení, zablokuje vykonávání dalších instrukcí a čeká, dokud nedojde
     příkaz, který by se mohl zpracovat. Po provedení příkazu robot pošle
     odpověď a opět začne čekat na příkazy z počítače. Tedy vždy platí, že robot
@@ -315,7 +314,7 @@
 
         Evorobot* \cite{evorobot} je software vyvinutý pro provádění
         experimentů na evoluci kolektivního chování a komunikace, založený na
-        e-puck robotovi. Skládá se z několika částí:
+        e-puck robotovi. Skládá se z~několika částí:
 
         \begin{itemize}
             \item evoluční algoritmus,

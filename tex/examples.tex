@@ -21,9 +21,9 @@ představ.
 \label{braitenberg vehicle}
 
 Braitenberg vehicle je experiment provedený italsko-australským vědcem
-Valentinem Braitenbergem. Zkoumal evoluční vývoj jednoduchých agentů a
-senzoricko-motorické interakce mezi robotem a prostředím, bez potřeby vnitřní
-paměti nebo reprezentace prostředí.
+Valentinem Braitenbergem. Ve svých experimentech zkoumal evoluční vývoj
+jednoduchých agentů a senzoricko-motorické interakce mezi robotem a prostředím,
+bez potřeby vnitřní paměti nebo reprezentace prostředí.
 
 V elementární formě jsou senzory přímo napojeny na akční členy. Například
 naměřené hodnoty světla na senzorech ovlivňují rychlost motorů. Robot pak může
@@ -170,7 +170,7 @@ začne otáčet na místě jako tank.
 \label{normal_prox_s}
 \end{listing}
 
-Nakonec už je pouze robotovi zaslán příkaz pro změnu rychlosti, dojde k malé
+Nakonec už je pouze robotovi zaslán příkaz pro změnu rychlosti, dojde k~malé
 pauze, aby ovládací program nevytěžoval PC a cyklus se opakuje. Pauza
 zapříčiňuje. že bude provedeno v průměru 7 iterací cyklu za jednu sekundu.
 Pokud ji odstraníme, tak nedojde k zlepšení chování robota, překážku uvidí ve
@@ -215,7 +215,6 @@ class Disco(object):
     The effect can be changed by turning selector.
 
     Turning selector values:
-
         0 -- Two rotating lights.
         1 -- Two rotating light in opposite directions.
         2 -- Blinking front led.
@@ -227,7 +226,8 @@ class Disco(object):
         self.c = Controller('/dev/rfcomm0', asynchronous=True)
         self.state_request = None
         # Get first state
-        self.state = self.c.get_turning_selector().get_response()
+        self.state = self.c.get_turning_selector() \
+                           .get_response()
 
     def init_vars(self):
         """Initialize vars used for effects."""
@@ -392,8 +392,6 @@ import Image as Img
 
 from epuck.controller import Controller
 
-logging.basicConfig(level=logging.ERROR)
-
 c = Controller('/dev/rfcomm0', timeout=5, asynchronous=True)
 
 # Set camera properties
@@ -462,7 +460,7 @@ velikost fotografie. Dále je nutné vytvořit grafické okno pomocí knihovny
 Tkinter a načíst data pro knihovnu OpenCV, která používá pro detekci obličejů.
 
 \begin{listing}
-\begin{pyc*}{firstnumber=20}
+\begin{pyc*}{firstnumber=18}
 # Set camera properties
 c.set_front_led(1)
 c.set_camera(Controller.GREYSCALE_MODE, 55, 55, 8)
@@ -485,7 +483,7 @@ robota. Nejprve (zdrojový kód \ref{photo_resize}) je získána fotka, ta je
 následně zvětšena pro lepší prohlížení.
 
 \begin{listing}
-\begin{pyc*}{firstnumber=32}
+\begin{pyc*}{firstnumber=30}
 def show_photo():
     # Get the photo
     img = c.get_photo() \
@@ -501,7 +499,7 @@ pro detekci obličejů, nalezené obličeje jsou zakresleny do fotky (zdrojový 
 \ref{opencv_part}).
 
 \begin{listing}
-\begin{pyc*}{firstnumber=38}
+\begin{pyc*}{firstnumber=36}
     # Convert the photo for OpenCV
     cv_img = cv.CreateImageHeader(img.size, cv.IPL_DEPTH_8U, 1)
     cv.SetData(cv_img, img.tostring())
@@ -532,11 +530,11 @@ pro detekci obličejů, nalezené obličeje jsou zakresleny do fotky (zdrojový 
 Nakonec už je fotka naposledy převedena, tentokrát do formátu pro Tkinter,
 a~zobrazena (\ref{tkinter_show}). Funkce \code{after} slouží k periodickému
 volání metody \code{show\_photo} každých 10ms. Díky tomu by se měl obraz
-aktualizovat téměř v reálném čase (samozřejmě je snímání fotky v robotovi
+aktualizovat téměř v~reálném čase (samozřejmě je snímání fotky v robotovi
 znatelné na časové prodlevě).
 
 \begin{listing}
-\begin{pyc*}{firstnumber=61}
+\begin{pyc*}{firstnumber=59}
     # Show the image with faces
     image = PhotoImage(img)
     img_face.config(image=image)

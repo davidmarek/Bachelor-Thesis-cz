@@ -5,7 +5,7 @@
     jedná o~připojení robota k počítači a uvedení jej do provozuschopného
     stavu. Součástí této inicializace je vytvoření spojení mezi počítačem a
     robotem a nainstalování firmware do robota. Vysvětlení jak se vše provádí
-    je k nalezení v kapitole \ref{pripojeni_robota}.
+    je k nalezení v~kapitole \ref{pripojeni_robota}.
 
     V druhém kroku už je robot připojený a tedy už mu můžeme posílat příkazy.
     Předchozí kapitola uvádí ukázky komunikace s robotem, ale až v kapitole
@@ -25,29 +25,29 @@
 
     E-puck robot s počítačem komunikuje pomocí Bluetooth. Pro připojení robota
     k počítači na operačním systému Linux je tedy třeba mít nainstalovánu
-    podporu pro Bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
-    bluez-utils}, dále je potřeba mít software pro správu PIN hesel ({\tt
+    podporu Bluetooth. Většinou jsou to balíčky {\tt bluez-firmware} a {\tt
+    bluez-utils}, dále je potřeba mít software pro správu PIN ({\tt
     bluez-pin, bluez-gnome a~bluetooth-applet, \ldots}).
 
     Nejprve je potřeba zjistit adresu robota. Lze využít utilitu {\tt hcitool}:
 
-    \begin{verbatim}
+    \begin{minted}[fontsize=\small]{text}
     $ hcitool scan
     Scanning ...
         10:00:E8:52:C6:3E	e-puck_1055
-    \end{verbatim}
+    \end{minted}
 
     Adresa robota se použije při nastavení virtuálního sériového portu v
     souboru {\tt /etc/bluetooth/rfcomm.conf}:
 
-    \begin{verbatim}
+    \begin{minted}[fontsize=\small]{text}
     rfcomm0 {
         bind yes;
-        device 10:00:E8:52:C6:3E; # Adresa zařízení
+        device 10:00:E8:52:C6:3E; # Adresa robota
         channel 1;
-        comment "e-puck_1055";    # Vlastní komentář
+        comment "e-puck_1055";    # Komentar
     }
-    \end{verbatim}
+    \end{minted}
 
     Tím jsme nakonfigurovali zařízení {\tt /dev/rfcomm0}.
 
@@ -56,11 +56,11 @@
     Zařízení reprezentující spojení s robotem jsme nakonfigurovali, nyní zbývá
     připojit robota:
 
-    \begin{verbatim}
+    \begin{minted}[fontsize=\small]{text}
     $ sudo rfcomm connect rfcomm0
     Connected /dev/rfcomm0 to 10:00:E8:52:C6:3E on channel 1
     Press CTRL-C for hangup
-    \end{verbatim}
+    \end{minted}
 
     Je důležité, aby uživatel, který bude ovládat robota, měl právo přístupu
     k~zařízení \code{/dev/rfcomm0}.
@@ -80,11 +80,11 @@
     \item{{\em Can't create RFCOMM TTY: Address already in use} -- Možná
         příčina je už připojené zařízení. Buď už běží {\tt rfcomm}, anebo jiná
         aplikace, která s~robotem udržuje komunikaci. Řešením je zavřít
-        aplikace komunikující s robotem, popř. zkusit následující příkazy:
-    \begin{verbatim}
+        aplikace komunikující s~robotem, popř. zkusit následující příkazy:
+    \begin{minted}[fontsize=\small]{text}
     $ rfcomm release rfcomm0
     $ rfcomm connect rfcomm0
-    \end{verbatim}
+    \end{minted}
     }
     \end{itemize}
 
@@ -92,13 +92,13 @@
 
     Knihovna komunikuje s E-puck robotem pomocí posílání textových příkazů. Je
     třeba do robota nahrát firmware BTcomDM. Ten je dodáván s knihovnou.
-    K jeho nahrání slouží skript \code{epuckupload} \cite{epuckupload}. Stačí
+    K~jeho nahrání slouží skript \code{epuckupload} \cite{epuckupload}. Stačí
     se řídit pomocí \code{README} a do robota nahrát soubor \code{BTcomDM.hex}.
     Příklad použití:
 
-    \begin{verbatim}
+    \begin{minted}[fontsize=\small]{text}
     $ epuckupload -f BTcomDM.hex rfcomm0
-    \end{verbatim}
+    \end{minted}
 
     Po spuštění příkazu je třeba robota restartovat (modré tlačítko na horní
     straně). Teprve pak se začne nahrávat nový firmware.
@@ -108,18 +108,18 @@
     Knihovna je dodávána v balíčku v příloze. Podporuje standardní instalaci,
     takže je možné ji nainstalovat pomocí skriptu \code{setup.py}.
 
-    \begin{verbatim}
+    \begin{minted}[fontsize=\small]{text}
     $ tar -xvf epuck-0.9.1.tar.gz
     $ cd epuck-0.9.1/
     $ sudo python setup.py install
-    \end{verbatim}
+    \end{minted}
 
     Také je možné ji nainstalovat z webového repositáře PyPI (Python Package
     Index) \cite{pypi} pomocí programu \code{easy\_install}.
 
-    \begin{verbatim}
+    \begin{minted}[fontsize=\small]{text}
     $ easy_install epuck
-    \end{verbatim}
+    \end{minted}
 
 \section{Ukázkový program}
 \label{ukazkovy_program}
@@ -221,8 +221,8 @@ sensor_values = sensor_request.get_response()
     odpověď, která přijde na zaslaný příkaz. Druhým krokem pak je získání této
     odpovědi.
 
-    Když už jsme získali nějaké data od robota, tak je můžeme zpracovat (v
-    tomto případě to jsou hodnoty z IR senzorů):
+    Když už jsme získali nějaké data od robota, můžeme přistoupit k jejich
+    zpracování (v~tomto případě to jsou hodnoty z IR senzorů):
 
     \begin{pyc*}{firstnumber=27}
 while (sensor_values['L10'] < threshold) \

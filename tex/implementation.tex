@@ -63,7 +63,7 @@
     číslo se znaménkem. Pokud je záporné, tak automaticky předpokládá, že vše
     co následuje je binární příkaz. Protože data v příkazu nejsou nijak
     kódována, tak není např. možné předpokládat, že se v příkazu neobjeví číslo
-    10, které v ASCII tabulce reprezentuje znak konce řádku. Z toho důvodu jsou
+    10, které v ASCII tabulce reprezentuje znak konce řádku. Z~toho důvodu jsou
     příkazy ukončeny bytem 0.
 
     Odpovědi v binárním režimu začínají hlavičkou, která obsahuje identifikaci
@@ -79,7 +79,7 @@
     Provedené úpravy se snaží vyřešit problémy stávajícího řešení a také
     umožňují použití asynchronní komunikace. Ke každému příkazu poslanému
     robotovi se přidává časový otisk, jedná se o 8--bitové číslo, které určuje
-    pořadí příkazu v sérii. Ve své odpovědi pak robot uvede jak kód označující
+    pořadí příkazu v~sérii. Ve své odpovědi pak robot uvede jak kód označující
     typ příkazu, na který odpovídá, tak také došlý otisk. Díky tomu je možné
     téměř jednoznačně (otisk se samozřejmě opakuje po určité době znova) svázat
     odpověď se zaslaným příkazem. Pokud tedy nějaké číslo chybí v posloupnosti
@@ -121,7 +121,7 @@
     Hlavní výhodou synchronní komunikace je její jednoduchost. Jak lze vidět
     ve zdrojovém kódu \ref{lst:sync_example}, příkaz lze předat robotovi
     zavoláním pouze jedné metody, která navíc i vrátí odpověď od robota. V
-    tomto případě se jedná o získání rychlosti motorů. Díky tomu lze robota
+    tomto případě se jedná o~získání rychlosti motorů. Díky tomu lze robota
     ovládat i z interpretu Pythonu, čímž se výrazně zkrátí doba potřebná pro
     testování nových nápadů. Tam, kde je normálně potřeba napsat zdrojový kód,
     zkompilovat aplikaci a následně ji pustit, tady stačí pouze pustit Python,
@@ -132,8 +132,8 @@
     \ref{btcom:prikazy}) a následně zablokuje (zavoláním metody {\tt read} na
     sériové spojení) další vykonávání příkazů, dokud neobdrží odpověď. Uživatel
     si tedy musí sám dávat pozor, zda-li se mu nějaký příkaz neztratil. Na
-    druhou stranu hlavní výhodou synchronní komunikace je, že uživatel v každé
-    chvíli přesně ví, co se děje.
+    druhou stranu hlavní výhodou synchronní komunikace je, že uživatel vždy
+    přesně ví, co se děje.
 
     \begin{listing}[H]
     \begin{pyc}
@@ -212,7 +212,7 @@ value = request.get_response()
 
     Při odesílání je příkaz zavolán ve vláknu s uživatelským programem, ovšem
     samotná zpráva robotovi musí být odeslána z vlákna asynchronní komunikace.
-    V~opačném případě by uživatelský program byl zpomalen přenosem k robotovi,
+    V~opačném případě by uživatelský program byl zpomalen přenosem k~robotovi,
     navíc asynchronní vlákno má větší přehled o spojení s robotem a tedy např.
     nedojde ke kolizi mezi posíláním a přijímáním dat. Je tedy nutné předat
     informaci o novém příkazu mezi vlákny.
@@ -246,7 +246,7 @@ value = request.get_response()
     Dost často je třeba odpověď ihned použít pro další zpracování a následující
     příkazy na ní nezáleží. Pak se zdá nutnost neustále kontrolovat, zda už od
     robota něco přišlo, nepřirozená. Lepší možnost je říct knihovně, co se má
-    vykonat po přijetí odpovědi a nechat ji, ať se o vše postará sama. Z tohoto
+    vykonat po přijetí odpovědi a nechat ji, ať se o vše postará sama. Z~tohoto
     důvodu má každý příkaz navíc parametr callback, přes který se může knihovně
     předat funkce, která bude spuštěna po přijetí odpovědi. Ukázka je ve
     zdrojovém kódu \ref{lst:callback}.
@@ -312,9 +312,9 @@ c = Controller('/dev/rfcomm0',
     velmi jednoduché. Při vytváření ovladače robota musí uživatel specifikovat,
     zda-li chce komunikaci synchronní anebo asynchronní. Hlavní změna, kterou
     pozná, je v návratové hodnotě příkazů. Při synchronní komunikaci příkazy
-    vrací rovnou výsledek, při asynchronní dostane nejprve odkaz na příkaz. Z
-    toho důvodu není možné psát programy, které budou fungovat se synchronní i
-    asynchronní komunikací.
+    vrací rovnou výsledek, při asynchronní dostane nejprve odkaz na příkaz.
+    Z~toho důvodu není možné psát programy, které budou fungovat se synchronní
+    i asynchronní komunikací.
 
     Zaslání příkazu je pouhé zavolání funkce a předání správných parametrů.
     Ovladač se sám stará o~vytvoření příkazu, přidá k němu timestamp, zakóduje
@@ -324,7 +324,7 @@ c = Controller('/dev/rfcomm0',
     výsledek. U jednoduchých příkazů, jako je třeba nastavení rychlosti motorů,
     jde pouze o~získání dvou čísel z řetězce. U složitějších příkazů už se může
     jednat o~netriviální činnost, například při získání fotky je potřeba
-    převést fotku z formátu, který používá robot, do formátu standardní
+    převést fotku z~formátu, který používá robot, do formátu standardní
     knihovny Pythonu.
 
     \section{Výkon knihovny}
@@ -337,7 +337,7 @@ c = Controller('/dev/rfcomm0',
     Nejprve začneme zjištěním údajů ze senzorů překážek. Kód \ref{time1} (pouze
     relevantní část) měří kolikrát za sekundu je možné získat údaje z IR
     senzorů. Program jsem nechal běžet 500 sekund. Nejlepší výsledek bylo 50
-    zavolání příkazu, nejhorší výsledek bylo jen 30 zavolání příkazu, v průměru
+    zavolání příkazu, nejhorší výsledek bylo jen 30 zavolání příkazu, v~průměru
     bylo posláno 39 příkazů. To je tedy v průměru 25ms na jednu iteraci.
 
 \begin{listing}
@@ -361,7 +361,7 @@ while True:
     sekundu v~průměru získat 3 snímky. Tady musíme započítat i převod z módu
     RGB565 do formátu používaného knihovnou PIL. Pokud nám bude stačit pouze
     černobílý obrázek stejných rozměrů, tak za sekundu jsme schopni jich získat
-    v průměru 5.
+    v~průměru 5.
 
 \begin{listing}
 \begin{pyc}
